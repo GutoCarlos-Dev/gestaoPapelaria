@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        h1 { text-align: center; margin-bottom: 20px; color: #007bff; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        input { padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px; background-color: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        .toggle { text-align: center; margin-top: 20px; }
+        .toggle a { color: #007bff; text-decoration: none; }
+        .error { color: red; font-size: 14px; margin-bottom: 10px; display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Container principal do formulário de login -->
+    <div class="login-container">
+        <!-- Título da página de login -->
+        <h1>Entrar no Leka Artes</h1>
+
+        <!-- Formulário de login - Permite ao usuário fazer login no sistema -->
+        <form id="loginForm">
+            <!-- Campo para email do usuário -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <!-- Campo para senha do usuário -->
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
+
+            <!-- Mensagem de erro para validação -->
+            <div id="error" class="error">Email ou senha inválidos.</div>
+
+            <!-- Botão para submeter o formulário de login -->
+            <button type="submit">Entrar</button>
+        </form>
+
+        <!-- Link para alternar para o formulário de cadastro -->
+        <div class="toggle">
+            <p>Não tem conta? <a href="#" id="toggleLink">Cadastrar-se</a></p>
+        </div>
+    </div>
+
+    <!-- Formulário de cadastro (inicialmente oculto) -->
+    <div class="login-container" id="registerContainer" style="display: none;">
+        <!-- Título da página de cadastro -->
+        <h1>Cadastrar no Leka Artes</h1>
+
+        <!-- Formulário de cadastro - Permite ao usuário criar uma nova conta -->
+        <form id="registerForm">
+            <!-- Campo para nome do usuário -->
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+
+            <!-- Campo para email do usuário -->
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" name="email" required>
+
+            <!-- Campo para senha do usuário -->
+            <label for="regPassword">Senha:</label>
+            <input type="password" id="regPassword" name="password" required>
+
+            <!-- Campo para confirmar senha -->
+            <label for="confirmPassword">Confirmar Senha:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <!-- Mensagem de erro para validação -->
+            <div id="regError" class="error">Por favor, preencha todos os campos corretamente.</div>
+
+            <!-- Botão para submeter o formulário de cadastro -->
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <!-- Link para alternar de volta para o formulário de login -->
+        <div class="toggle">
+            <p>Já tem conta? <a href="#" id="toggleBackLink">Fazer Login</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar entre formulários de login e cadastro
+        // Esta função mostra/oculta os containers apropriados quando o usuário clica nos links
+        function toggleForms() {
+            const loginContainer = document.querySelector('.login-container');
+            const registerContainer = document.getElementById('registerContainer');
+
+            if (loginContainer.style.display !== 'none') {
+                loginContainer.style.display = 'none';
+                registerContainer.style.display = 'block';
+            } else {
+                loginContainer.style.display = 'block';
+                registerContainer.style.display = 'none';
+            }
+        }
+
+        // Adiciona event listeners aos links de alternância
+        // Permite ao usuário alternar entre login e cadastro sem recarregar a página
+        document.getElementById('toggleLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleForms();
+        });
+
+        document.getElementById('toggleBackLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleForms();
+        });
+
+        // Validação básica do formulário de login
+        // Verifica se os campos estão preenchidos e simula uma validação de credenciais
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+
+            if (email && password) {
+                // Simulação de validação - em um sistema real, isso seria enviado para o servidor
+                if (email === 'admin@lekaartes.com' && password === '123456') {
+                    alert('Login realizado com sucesso! Redirecionando para o dashboard...');
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorDiv.style.display = 'block';
+                }
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        // Validação básica do formulário de cadastro
+        // Verifica se todos os campos estão preenchidos e se as senhas coincidem
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('regError');
+
+            if (name && email && password && confirmPassword) {
+                if (password === confirmPassword) {
+                    // Simulação de cadastro - em um sistema real, isso seria enviado para o servidor
+                    alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                    toggleForms(); // Volta para o formulário de login
+                } else {
+                    errorDiv.textContent = 'As senhas não coincidem.';
+                    errorDiv.style.display = 'block';
+                }
+            } else {
+                errorDiv.style.display = 'block';
+            }
+        });
+    </script>
+
+</body>
+</html>

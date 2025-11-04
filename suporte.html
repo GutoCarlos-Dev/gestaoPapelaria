@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .support-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .support-card { background-color: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .support-icon { font-size: 48px; margin-bottom: 15px; }
+        .support-card h3 { margin-bottom: 10px; color: #007bff; }
+        .contact-form { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 40px; }
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .form-row > * { flex: 1; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; }
+        textarea { resize: vertical; min-height: 120px; }
+        button { padding: 12px 25px; background-color: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #218838; }
+        .btn-whatsapp { background-color: #25d366; }
+        .btn-whatsapp:hover { background-color: #128c7e; }
+        .faq-section { background-color: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .faq-item { border-bottom: 1px solid #eee; padding: 20px 0; }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-question { font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-answer { display: none; margin-top: 10px; color: #666; line-height: 1.6; }
+        .faq-toggle { font-size: 18px; }
+        .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .quick-link { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; text-decoration: none; color: #333; transition: transform 0.2s; }
+        .quick-link:hover { transform: translateY(-2px); text-decoration: none; color: #333; }
+        .quick-link-icon { font-size: 36px; margin-bottom: 10px; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .status-online { background-color: #28a745; }
+        .status-offline { background-color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1>Leka Artes - Central de Suporte</h1>
+        <nav>
+            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="suporte.html">Suporte</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <!-- Container principal da página de suporte -->
+    <div class="container">
+
+        <!-- Links rápidos para diferentes tipos de suporte -->
+        <div class="quick-links">
+            <!-- Link para suporte técnico -->
+            <a href="#contato" class="quick-link">
+                <div class="quick-link-icon">🛠️</div>
+                <h3>Suporte Técnico</h3>
+                <p>Problemas com pedidos, produtos ou sistema</p>
+            </a>
+            <!-- Link para atendimento comercial -->
+            <a href="#contato" class="quick-link">
+                <div class="quick-link-icon">💼</div>
+                <h3>Atendimento Comercial</h3>
+                <p>Orçamentos, pedidos especiais e parcerias</p>
+            </a>
+            <!-- Link para WhatsApp -->
+            <a href="javascript:void(0)" onclick="contatoWhatsApp()" class="quick-link">
+                <div class="quick-link-icon">📱</div>
+                <h3>WhatsApp</h3>
+                <p><span class="status-indicator status-online"></span>Atendimento rápido</p>
+            </a>
+            <!-- Link para horário de atendimento -->
+            <a href="#horarios" class="quick-link">
+                <div class="quick-link-icon">🕒</div>
+                <h3>Horários</h3>
+                <p>Seg-Sex: 8h às 18h<br>Sáb: 8h às 12h</p>
+            </a>
+        </div>
+
+        <!-- Grid de opções de contato -->
+        <div class="support-grid">
+            <!-- Opção de contato por telefone -->
+            <div class="support-card">
+                <div class="support-icon">📞</div>
+                <h3>Telefone</h3>
+                <p>(11) 99999-9999</p>
+                <p>Atendimento direto com nossa equipe</p>
+                <button onclick="contatoTelefone()">Ligar Agora</button>
+            </div>
+            <!-- Opção de contato por email -->
+            <div class="support-card">
+                <div class="support-icon">✉️</div>
+                <h3>Email</h3>
+                <p>contato@lekaartes.com.br</p>
+                <p>Para dúvidas e solicitações formais</p>
+                <button onclick="contatoEmail()">Enviar Email</button>
+            </div>
+            <!-- Opção de contato por WhatsApp -->
+            <div class="support-card">
+                <div class="support-icon">💬</div>
+                <h3>WhatsApp</h3>
+                <p>(11) 99999-9999</p>
+                <p>Resposta mais rápida</p>
+                <button class="btn-whatsapp" onclick="contatoWhatsApp()">Conversar</button>
+            </div>
+        </div>
+
+        <!-- Formulário de contato detalhado -->
+        <div class="contact-form" id="contato">
+            <h2>Envie sua Mensagem</h2>
+            <p>Preencha o formulário abaixo e entraremos em contato o mais breve possível.</p>
+
+            <!-- Formulário de contato -->
+            <form id="formContato">
+                <!-- Linha com nome e email -->
+                <div class="form-row">
+                    <div>
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+                    <div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Linha com telefone e assunto -->
+                <div class="form-row">
+                    <div>
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999">
+                    </div>
+                    <div>
+                        <label for="assunto">Assunto:</label>
+                        <select id="assunto" name="assunto" required>
+                            <option value="">Selecione um assunto</option>
+                            <option value="orcamento">Solicitar Orçamento</option>
+                            <option value="pedido">Acompanhar Pedido</option>
+                            <option value="produto">Informações sobre Produto</option>
+                            <option value="reclamacao">Reclamação</option>
+                            <option value="sugestao">Sugestão</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo de mensagem -->
+                <label for="mensagem">Mensagem:</label>
+                <textarea id="mensagem" name="mensagem" required placeholder="Descreva detalhadamente sua dúvida, solicitação ou problema..."></textarea>
+
+                <!-- Checkbox para aceitar contato -->
+                <div style="margin-bottom: 20px;">
+                    <input type="checkbox" id="aceitarContato" name="aceitarContato" required style="margin-right: 10px;">
+                    <label for="aceitarContato" style="display: inline; font-weight: normal;">Aceito receber contato da Leka Artes por telefone, email ou WhatsApp</label>
+                </div>
+
+                <!-- Botão de envio -->
+                <button type="submit">Enviar Mensagem</button>
+            </form>
+        </div>
+
+        <!-- Seção de perguntas frequentes -->
+        <div class="faq-section">
+            <h2 id="horarios">Perguntas Frequentes</h2>
+
+            <!-- Lista de perguntas e respostas -->
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Qual é o prazo de entrega dos meus produtos?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    O prazo de entrega varia de acordo com o produto e quantidade solicitada. Cartões de visita geralmente ficam prontos em 3-5 dias úteis. Banners e materiais maiores podem levar 7-10 dias úteis. Para pedidos urgentes, entre em contato conosco para verificar disponibilidade.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Como posso acompanhar o status do meu pedido?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Você pode acompanhar o status do seu pedido através do painel "Pedidos" no nosso sistema, informando o número do pedido. Também enviamos atualizações por WhatsApp e email conforme o andamento da produção.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Vocês fazem entrega em todo o Brasil?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Sim! Fazemos entregas para todo o território brasileiro através dos Correios e transportadoras parceiras. Os custos de frete são calculados automaticamente no momento da solicitação do orçamento.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Posso solicitar alterações no meu pedido após a aprovação?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Pequenas alterações podem ser feitas até 24 horas após a aprovação do pedido. Para mudanças significativas, pode haver custos adicionais. Entre em contato conosco imediatamente se precisar de alterações.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Qual é a quantidade mínima para pedidos?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    A quantidade mínima varia por produto: Cartões de visita (100 unidades), Folhetos (500 unidades), Banners (1 unidade). Para quantidades menores, entre em contato para verificar possibilidades especiais.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Como funciona o processo de aprovação de artes?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Após receber sua solicitação, nossa equipe prepara uma proposta com layout sugerido. Você recebe uma prévia digital para aprovação. Após suas correções e aprovação final, iniciamos a produção. Todo o processo é acompanhado por você.
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        // Função para expandir/colapsar perguntas frequentes
+        // Mostra ou oculta a resposta da pergunta clicada
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const toggle = element.querySelector('.faq-toggle');
+
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+                toggle.textContent = '+';
+            } else {
+                answer.style.display = 'block';
+                toggle.textContent = '−';
+            }
+        }
+
+        // Função para contato por telefone
+        // Simula ligação para o número de suporte
+        function contatoTelefone() {
+            const numero = '+5511999999999';
+            // Em um sistema real, isso abriria o discador do telefone
+            // window.location.href = `tel:${numero}`;
+            alert(`Ligando para: ${numero}\n\nEm um dispositivo real, isso iniciaria uma ligação telefônica.`);
+        }
+
+        // Função para contato por email
+        // Abre cliente de email com destinatário preenchido
+        function contatoEmail() {
+            const email = 'contato@lekaartes.com.br';
+            const assunto = 'Contato - Leka Artes';
+            // Em um sistema real, isso abriria o cliente de email
+            // window.location.href = `mailto:${email}?subject=${encodeURIComponent(assunto)}`;
+            alert(`Abrindo cliente de email para: ${email}\n\nEm um sistema real, isso abriria seu cliente de email padrão.`);
+        }
+
+        // Função para contato por WhatsApp
+        // Abre WhatsApp com mensagem inicial
+        function contatoWhatsApp() {
+            const numero = '5511999999999';
+            const mensagem = 'Olá! Gostaria de falar com o suporte da Leka Artes.';
+            // Em um sistema real, isso abriria o WhatsApp
+            // window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`);
+            alert(`Abrindo WhatsApp para: ${numero}\nMensagem: ${mensagem}\n\nEm um sistema real, isso abriria o WhatsApp automaticamente.`);
+        }
+
+        // Event listener para submissão do formulário de contato
+        // Processa o envio do formulário de contato
+        document.getElementById('formContato').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Coletar dados do formulário
+            const formData = new FormData(this);
+            const dados = Object.fromEntries(formData);
+
+            // Simulação de envio (em um sistema real, isso enviaria para o servidor)
+            console.log('Dados do formulário:', dados);
+
+            // Mostrar mensagem de sucesso
+            alert('Mensagem enviada com sucesso!\n\nEntraremos em contato em até 24 horas.\n\nDados enviados:\n' +
+                  `- Nome: ${dados.nome}\n` +
+                  `- Email: ${dados.email}\n` +
+                  `- Telefone: ${dados.telefone}\n` +
+                  `- Assunto: ${dados.assunto}\n` +
+                  `- Mensagem: ${dados.mensagem.substring(0, 100)}...`);
+
+            // Limpar formulário
+            this.reset();
+        });
+
+        // Simulação de status online/offline do WhatsApp
+        // Em um sistema real, isso seria verificado via API
+        function atualizarStatusWhatsApp() {
+            const indicador = document.querySelector('.status-online');
+            // Simulação: online durante horário comercial
+            const agora = new Date();
+            const diaSemana = agora.getDay(); // 0 = Domingo, 6 = Sábado
+            const hora = agora.getHours();
+
+            if (diaSemana >= 1 && diaSemana <= 5 && hora >= 8 && hora <= 18) {
+                indicador.className = 'status-indicator status-online';
+            } else if (diaSemana === 6 && hora >= 8 && hora <= 12) {
+                indicador.className = 'status-indicator status-online';
+            } else {
+                indicador.className = 'status-indicator status-offline';
+            }
+        }
+
+        // Atualizar status do WhatsApp a cada minuto
+        setInterval(atualizarStatusWhatsApp, 60000);
+        // Atualizar imediatamente ao carregar
+        window.addEventListener('load', atualizarStatusWhatsApp);
+    </script>
+
+</body>
+</html>

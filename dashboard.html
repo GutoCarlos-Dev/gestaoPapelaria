@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .dashboard-container { padding: 20px; }
+        .welcome { background-color: #007bff; color: #fff; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .stats { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .stat-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 200px; text-align: center; }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .charts { display: flex; gap: 20px; flex-wrap: wrap; }
+        .chart { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        .chart h3 { margin-top: 0; }
+        .bar-chart { display: flex; align-items: end; height: 200px; margin-top: 20px; }
+        .bar { background-color: #007bff; margin: 0 5px; min-height: 10px; display: flex; align-items: end; justify-content: center; color: white; font-size: 12px; }
+        .pie-chart { width: 200px; height: 200px; border-radius: 50%; background: conic-gradient(#007bff 0% 40%, #28a745 40% 70%, #ffc107 70% 100%); margin: 20px auto; position: relative; }
+        .pie-chart::after { content: ''; position: absolute; top: 50%; left: 50%; width: 80px; height: 80px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); }
+    </style>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1>Leka Artes - Dashboard</h1>
+        <nav>
+            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="suporte.html">Suporte</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <!-- Container principal do dashboard -->
+    <div class="dashboard-container">
+
+        <!-- Seção de boas-vindas - Saudação personalizada para o usuário -->
+        <div class="welcome">
+            <h2>Bem-vindo ao seu Dashboard, [Nome do Usuário]!</h2>
+            <p>Aqui você tem uma visão geral completa do seu negócio em tempo real.</p>
+        </div>
+
+        <!-- Cards de estatísticas principais - Indicadores-chave de performance -->
+        <div class="stats">
+            <!-- Card: Total de Pedidos - Mostra o número total de pedidos realizados -->
+            <div class="stat-card">
+                <h3>Total de Pedidos</h3>
+                <div class="stat-number" id="totalPedidos">247</div>
+                <p>Este mês</p>
+            </div>
+            <!-- Card: Receita Total - Exibe o valor total de vendas -->
+            <div class="stat-card">
+                <h3>Receita Total</h3>
+                <div class="stat-number" id="receitaTotal">R$ 12.450</div>
+                <p>Este mês</p>
+            </div>
+            <!-- Card: Clientes Ativos - Número de clientes únicos -->
+            <div class="stat-card">
+                <h3>Clientes Ativos</h3>
+                <div class="stat-number" id="clientesAtivos">89</div>
+                <p>Este mês</p>
+            </div>
+            <!-- Card: Produtos em Estoque - Quantidade total de produtos disponíveis -->
+            <div class="stat-card">
+                <h3>Produtos em Estoque</h3>
+                <div class="stat-number" id="produtosEstoque">1.234</div>
+                <p>Unidades</p>
+            </div>
+        </div>
+
+        <!-- Seção de gráficos - Visualizações de dados importantes -->
+        <div class="charts">
+
+            <!-- Gráfico de Barras: Vendas por Mês - Mostra tendência de vendas mensais -->
+            <div class="chart">
+                <h3>Vendas por Mês</h3>
+                <p>Análise das vendas dos últimos 6 meses</p>
+                <!-- Gráfico de barras simulado com CSS - representa vendas mensais -->
+                <div class="bar-chart">
+                    <div class="bar" style="height: 60%;">Jan<br>R$ 8.500</div>
+                    <div class="bar" style="height: 75%;">Fev<br>R$ 9.200</div>
+                    <div class="bar" style="height: 80%;">Mar<br>R$ 10.100</div>
+                    <div class="bar" style="height: 90%;">Abr<br>R$ 11.300</div>
+                    <div class="bar" style="height: 100%;">Mai<br>R$ 12.450</div>
+                    <div class="bar" style="height: 85%;">Jun<br>R$ 10.800</div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Pizza: Status dos Pedidos - Distribuição dos pedidos por status -->
+            <div class="chart">
+                <h3>Status dos Pedidos</h3>
+                <p>Distribuição atual dos pedidos por status</p>
+                <!-- Gráfico de pizza simulado com CSS - representa diferentes status de pedidos -->
+                <div class="pie-chart"></div>
+                <div style="display: flex; justify-content: center; gap: 20px; margin-top: 10px;">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background: #007bff; border-radius: 50%;"></div>
+                        <span>Pendente (40%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background: #28a745; border-radius: 50%;"></div>
+                        <span>Em Andamento (30%)</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <div style="width: 15px; height: 15px; background: #ffc107; border-radius: 50%;"></div>
+                        <span>Concluído (30%)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Seção adicional: Atividades Recentes - Lista das últimas ações no sistema -->
+        <div class="chart" style="margin-top: 20px;">
+            <h3>Atividades Recentes</h3>
+            <ul>
+                <li>Novo pedido #1234 cadastrado - Cartões de Visita (há 2 horas)</li>
+                <li>Cliente João Silva fez uma compra - R$ 150,00 (há 4 horas)</li>
+                <li>Estoque de Papel A4 atualizado - 500 unidades adicionadas (há 6 horas)</li>
+                <li>Orçamento enviado para cliente Maria Santos (há 1 dia)</li>
+                <li>Pagamento recebido - Pedido #1220 (há 1 dia)</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        // Função para atualizar estatísticas em tempo real (simulado)
+        // Esta função simula a atualização dinâmica dos indicadores do dashboard
+        function atualizarEstatisticas() {
+            // Simulação de atualização de dados - em um sistema real, isso viria de uma API
+            const totalPedidos = document.getElementById('totalPedidos');
+            const receitaTotal = document.getElementById('receitaTotal');
+            const clientesAtivos = document.getElementById('clientesAtivos');
+            const produtosEstoque = document.getElementById('produtosEstoque');
+
+            // Pequenas variações para simular dados em tempo real
+            totalPedidos.textContent = Math.floor(Math.random() * 10) + 240;
+            receitaTotal.textContent = 'R$ ' + (Math.floor(Math.random() * 500) + 12000).toLocaleString('pt-BR');
+            clientesAtivos.textContent = Math.floor(Math.random() * 5) + 85;
+            produtosEstoque.textContent = Math.floor(Math.random() * 50) + 1200;
+        }
+
+        // Atualiza as estatísticas a cada 30 segundos para simular dados em tempo real
+        setInterval(atualizarEstatisticas, 30000);
+
+        // Função para inicializar o dashboard
+        // Carrega dados iniciais e configura event listeners se necessário
+        function inicializarDashboard() {
+            console.log('Dashboard inicializado com sucesso');
+            // Aqui poderiam ser feitas chamadas para APIs para carregar dados reais
+        }
+
+        // Chama a função de inicialização quando a página carrega
+        window.addEventListener('load', inicializarDashboard);
+    </script>
+
+</body>
+</html>

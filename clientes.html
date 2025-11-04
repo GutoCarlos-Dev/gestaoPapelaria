@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clientes - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { padding: 20px; }
+        .actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { padding: 10px 15px; background-color: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        .btn-secondary { background-color: #007bff; }
+        .btn-secondary:hover { background-color: #0056b3; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .search-bar { margin-bottom: 20px; }
+        input[type="text"] { padding: 8px; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .status { padding: 4px 8px; border-radius: 4px; color: white; font-size: 12px; }
+        .status.ativo { background-color: #28a745; }
+        .status.inativo { background-color: #6c757d; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row > * { flex: 1; }
+        .tabs { display: flex; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background-color: #f8f9fa; border: none; cursor: pointer; border-radius: 4px 4px 0 0; }
+        .tab.active { background-color: #fff; border-bottom: 2px solid #007bff; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .strategy-card { background-color: #fff; padding: 15px; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1>Leka Artes - Gestão de Clientes</h1>
+        <nav>
+            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="suporte.html">Suporte</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <!-- Container principal da página de clientes -->
+    <div class="container">
+
+        <!-- Abas para diferentes seções da gestão de clientes -->
+        <div class="tabs">
+            <!-- Aba de listagem de clientes -->
+            <button class="tab active" onclick="abrirAba('listagem')">Listagem de Clientes</button>
+            <!-- Aba de estratégias de marketing -->
+            <button class="tab" onclick="abrirAba('estrategias')">Estratégias de Marketing</button>
+        </div>
+
+        <!-- Conteúdo da aba de listagem de clientes -->
+        <div id="listagem" class="tab-content active">
+
+            <!-- Barra de pesquisa e ações -->
+            <div class="actions">
+                <!-- Campo de pesquisa por nome ou email -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Buscar cliente por nome ou email..." onkeyup="filtrarClientes()">
+                </div>
+                <!-- Botão para adicionar novo cliente -->
+                <button onclick="abrirModal('novoCliente')">Novo Cliente</button>
+                <!-- Botão para exportar lista de clientes -->
+                <button class="btn-secondary" onclick="exportarClientes()">Exportar CSV</button>
+            </div>
+
+            <!-- Tabela de clientes - Lista todos os clientes cadastrados -->
+            <table id="tabelaClientes">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>Status</th>
+                        <th>Última Compra</th>
+                        <th>Total Gasto</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Linhas de exemplo de clientes - em sistema real viriam do banco de dados -->
+                    <tr>
+                        <td>001</td>
+                        <td>João Silva</td>
+                        <td>joao@email.com</td>
+                        <td>(11) 99999-9999</td>
+                        <td><span class="status ativo">Ativo</span></td>
+                        <td>2024-01-15</td>
+                        <td>R$ 4.250,00</td>
+                        <td>
+                            <!-- Botões de ação para cada cliente -->
+                            <button onclick="verHistorico(1)">Histórico</button>
+                            <button onclick="editarCliente(1)">Editar</button>
+                            <button class="btn-danger" onclick="excluirCliente(1)">Excluir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>002</td>
+                        <td>Maria Santos</td>
+                        <td>maria@email.com</td>
+                        <td>(11) 88888-8888</td>
+                        <td><span class="status ativo">Ativo</span></td>
+                        <td>2024-01-14</td>
+                        <td>R$ 3.800,00</td>
+                        <td>
+                            <button onclick="verHistorico(2)">Histórico</button>
+                            <button onclick="editarCliente(2)">Editar</button>
+                            <button class="btn-danger" onclick="excluirCliente(2)">Excluir</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>003</td>
+                        <td>Carlos Oliveira</td>
+                        <td>carlos@email.com</td>
+                        <td>(11) 77777-7777</td>
+                        <td><span class="status inativo">Inativo</span></td>
+                        <td>2023-12-10</td>
+                        <td>R$ 2.900,00</td>
+                        <td>
+                            <button onclick="verHistorico(3)">Histórico</button>
+                            <button onclick="editarCliente(3)">Editar</button>
+                            <button class="btn-danger" onclick="excluirCliente(3)">Excluir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- Conteúdo da aba de estratégias de marketing -->
+        <div id="estrategias" class="tab-content">
+
+            <h2>Estratégias de Marketing Personalizadas</h2>
+            <p>Baseado no histórico de compras e perfil dos clientes, sugerimos as seguintes estratégias:</p>
+
+            <!-- Cards de estratégias sugeridas -->
+            <div class="strategy-card">
+                <h3>🎯 Clientes Ativos com Alto Valor</h3>
+                <p><strong>João Silva e Maria Santos</strong> - Clientes fiéis com alto ticket médio.</p>
+                <p><strong>Estratégia:</strong> Oferecer programa de fidelidade com descontos progressivos e produtos premium.</p>
+                <button class="btn-secondary" onclick="enviarCampanha('alto-valor')">Enviar Campanha</button>
+            </div>
+
+            <div class="strategy-card">
+                <h3>🔄 Clientes Inativos</h3>
+                <p><strong>Carlos Oliveira</strong> - Cliente que não compra há mais de 30 dias.</p>
+                <p><strong>Estratégia:</strong> Enviar cupom de desconto de 15% para reativação e pesquisa de satisfação.</p>
+                <button class="btn-secondary" onclick="enviarCampanha('inativo')">Reativar Cliente</button>
+            </div>
+
+            <div class="strategy-card">
+                <h3>📈 Potencial de Upsell</h3>
+                <p>Clientes que compram produtos básicos podem estar interessados em pacotes completos.</p>
+                <p><strong>Estratégia:</strong> Sugerir upgrades e combos com desconto para aumentar o ticket médio.</p>
+                <button class="btn-secondary" onclick="enviarCampanha('upsell')">Campanha de Upsell</button>
+            </div>
+
+            <div class="strategy-card">
+                <h3>🎉 Aniversariantes do Mês</h3>
+                <p>Clientes que fazem aniversário neste mês merecem atenção especial.</p>
+                <p><strong>Estratégia:</strong> Enviar felicitações personalizadas com oferta exclusiva de 10% off.</p>
+                <button class="btn-secondary" onclick="enviarCampanha('aniversario')">Campanha de Aniversário</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal para novo/editar cliente - Formulário popup para gerenciar clientes -->
+    <div id="modalCliente" class="modal">
+        <div class="modal-content">
+            <!-- Título do modal - muda dinamicamente entre "Novo Cliente" e "Editar Cliente" -->
+            <h2 id="modalTitle">Novo Cliente</h2>
+
+            <!-- Formulário de cliente - Campos para inserir dados do cliente -->
+            <form id="formCliente">
+                <!-- Campo oculto para ID do cliente (usado na edição) -->
+                <input type="hidden" id="clienteId">
+
+                <!-- Linha de campos: Nome e Email -->
+                <div class="form-row">
+                    <!-- Campo para nome do cliente -->
+                    <div>
+                        <label for="nome">Nome Completo:</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <!-- Campo para email do cliente -->
+                    <div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+
+                <!-- Linha de campos: Telefone e Data de Nascimento -->
+                <div class="form-row">
+                    <!-- Campo para telefone do cliente -->
+                    <div>
+                        <label for="telefone">Telefone:</label>
+                        <input type="tel" id="telefone" placeholder="(11) 99999-9999" required>
+                    </div>
+                    <!-- Campo para data de nascimento -->
+                    <div>
+                        <label for="dataNascimento">Data de Nascimento:</label>
+                        <input type="date" id="dataNascimento">
+                    </div>
+                </div>
+
+                <!-- Campo para endereço -->
+                <label for="endereco">Endereço:</label>
+                <textarea id="endereco" rows="2" placeholder="Rua, número, bairro, cidade - UF"></textarea>
+
+                <!-- Campo para status do cliente -->
+                <label for="statusCliente">Status:</label>
+                <select id="statusCliente" required>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+
+                <!-- Campo para observações adicionais -->
+                <label for="observacoes">Observações:</label>
+                <textarea id="observacoes" rows="3" placeholder="Informações adicionais sobre o cliente..."></textarea>
+
+                <!-- Botões do formulário -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <!-- Botão para cancelar e fechar o modal -->
+                    <button type="button" onclick="fecharModal()">Cancelar</button>
+                    <!-- Botão para salvar o cliente -->
+                    <button type="submit">Salvar Cliente</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para histórico do cliente - Mostra compras e interações -->
+    <div id="modalHistorico" class="modal">
+        <div class="modal-content">
+            <h2>Histórico do Cliente</h2>
+            <div id="historicoContent">
+                <!-- Conteúdo do histórico será carregado dinamicamente -->
+            </div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button onclick="fecharModal()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variável global para armazenar clientes (simulação de banco de dados)
+        // Em um sistema real, esses dados viriam de uma API ou banco de dados
+        let clientes = [
+            { id: 1, nome: 'João Silva', email: 'joao@email.com', telefone: '(11) 99999-9999', status: 'ativo', ultimaCompra: '2024-01-15', totalGasto: 4250.00, dataNascimento: '1985-03-15', endereco: 'Rua das Flores, 123, São Paulo - SP', observacoes: 'Cliente fiel, prefere cartões de visita' },
+            { id: 2, nome: 'Maria Santos', email: 'maria@email.com', telefone: '(11) 88888-8888', status: 'ativo', ultimaCompra: '2024-01-14', totalGasto: 3800.00, dataNascimento: '1990-07-22', endereco: 'Av. Paulista, 456, São Paulo - SP', observacoes: 'Gosta de banners personalizados' },
+            { id: 3, nome: 'Carlos Oliveira', email: 'carlos@email.com', telefone: '(11) 77777-7777', status: 'inativo', ultimaCompra: '2023-12-10', totalGasto: 2900.00, dataNascimento: '1982-11-08', endereco: 'Rua do Comércio, 789, São Paulo - SP', observacoes: 'Cliente antigo, parou de comprar recentemente' }
+        ];
+
+        // Função para abrir abas
+        // Mostra o conteúdo da aba selecionada e oculta as outras
+        function abrirAba(abaId) {
+            // Remover classe active de todas as abas
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Adicionar classe active na aba selecionada
+            event.target.classList.add('active');
+            document.getElementById(abaId).classList.add('active');
+        }
+
+        // Função para abrir modal de novo cliente
+        // Limpa o formulário e define o título apropriado
+        function abrirModal(tipo) {
+            document.getElementById('modalCliente').style.display = 'block';
+            document.getElementById('modalTitle').textContent = tipo === 'novoCliente' ? 'Novo Cliente' : 'Editar Cliente';
+            if (tipo === 'novoCliente') {
+                limparFormulario();
+            }
+        }
+
+        // Função para fechar modal
+        // Oculta o modal e limpa o formulário
+        function fecharModal() {
+            document.getElementById('modalCliente').style.display = 'none';
+            document.getElementById('modalHistorico').style.display = 'none';
+            limparFormulario();
+        }
+
+        // Função para limpar formulário
+        // Reseta todos os campos do formulário para valores vazios
+        function limparFormulario() {
+            document.getElementById('clienteId').value = '';
+            document.getElementById('nome').value = '';
+            document.getElementById('email').value = '';
+            document.getElementById('telefone').value = '';
+            document.getElementById('dataNascimento').value = '';
+            document.getElementById('endereco').value = '';
+            document.getElementById('statusCliente').value = 'ativo';
+            document.getElementById('observacoes').value = '';
+        }
+
+        // Função para editar cliente
+        // Carrega os dados do cliente no formulário para edição
+        function editarCliente(id) {
+            const cliente = clientes.find(c => c.id === id);
+            if (cliente) {
+                document.getElementById('clienteId').value = cliente.id;
+                document.getElementById('nome').value = cliente.nome;
+                document.getElementById('email').value = cliente.email;
+                document.getElementById('telefone').value = cliente.telefone;
+                document.getElementById('dataNascimento').value = cliente.dataNascimento || '';
+                document.getElementById('endereco').value = cliente.endereco || '';
+                document.getElementById('statusCliente').value = cliente.status;
+                document.getElementById('observacoes').value = cliente.observacoes || '';
+                abrirModal('editarCliente');
+            }
+        }
+
+        // Função para excluir cliente
+        // Remove o cliente da lista após confirmação do usuário
+        function excluirCliente(id) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                clientes = clientes.filter(c => c.id !== id);
+                atualizarTabela();
+            }
+        }
+
+        // Função para ver histórico do cliente
+        // Mostra compras e interações do cliente em um modal
+        function verHistorico(id) {
+            const cliente = clientes.find(c => c.id === id);
+            if (cliente) {
+                const historicoContent = document.getElementById('historicoContent');
+                historicoContent.innerHTML = `
+                    <h3>${cliente.nome}</h3>
+                    <p><strong>Email:</strong> ${cliente.email}</p>
+                    <p><strong>Telefone:</strong> ${cliente.telefone}</p>
+                    <p><strong>Status:</strong> ${cliente.status}</p>
+                    <p><strong>Total Gasto:</strong> R$ ${cliente.totalGasto.toFixed(2)}</p>
+                    <p><strong>Última Compra:</strong> ${cliente.dataNascimento}</p>
+                    <h4>Últimas Compras:</h4>
+                    <ul>
+                        <li>Cartões de Visita - R$ 150,00 (15/01/2024)</li>
+                        <li>Banners - R$ 300,00 (10/01/2024)</li>
+                        <li>Folhetos - R$ 200,00 (05/01/2024)</li>
+                    </ul>
+                    <h4>Observações:</h4>
+                    <p>${cliente.observacoes || 'Nenhuma observação registrada.'}</p>
+                `;
+                document.getElementById('modalHistorico').style.display = 'block';
+            }
+        }
+
+        // Função para filtrar clientes
+        // Filtra a tabela baseado no texto digitado na busca
+        function filtrarClientes() {
+            const filtro = document.getElementById('searchInput').value.toLowerCase();
+            const linhas = document.querySelectorAll('#tabelaClientes tbody tr');
+
+            linhas.forEach(linha => {
+                const texto = linha.textContent.toLowerCase();
+                linha.style.display = texto.includes(filtro) ? '' : 'none';
+            });
+        }
+
+        // Função para atualizar tabela
+        // Re-renderiza a tabela com os dados atuais dos clientes
+        function atualizarTabela() {
+            const tbody = document.querySelector('#tabelaClientes tbody');
+            tbody.innerHTML = '';
+
+            clientes.forEach(cliente => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cliente.id.toString().padStart(3, '0')}</td>
+                    <td>${cliente.nome}</td>
+                    <td>${cliente.email}</td>
+                    <td>${cliente.telefone}</td>
+                    <td><span class="status ${cliente.status}">${cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1)}</span></td>
+                    <td>${cliente.ultimaCompra}</td>
+                    <td>R$ ${cliente.totalGasto.toFixed(2)}</td>
+                    <td>
+                        <button onclick="verHistorico(${cliente.id})">Histórico</button>
+                        <button onclick="editarCliente(${cliente.id})">Editar</button>
+                        <button class="btn-danger" onclick="excluirCliente(${cliente.id})">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Função para exportar clientes (simulado)
+        // Em um sistema real, isso geraria um arquivo CSV com os dados
+        function exportarClientes() {
+            alert('Funcionalidade de exportação para CSV seria implementada aqui.\nEm um sistema real, isso geraria um arquivo .csv com todos os clientes.');
+        }
+
+        // Função para enviar campanhas de marketing (simulado)
+        // Em um sistema real, isso enviaria emails ou mensagens para os clientes
+        function enviarCampanha(tipo) {
+            const mensagens = {
+                'alto-valor': 'Campanha de fidelidade enviada para clientes de alto valor!',
+                'inativo': 'Campanha de reativação enviada para clientes inativos!',
+                'upsell': 'Campanha de upsell enviada para clientes com potencial!',
+                'aniversario': 'Campanha de aniversário enviada para aniversariantes do mês!'
+            };
+            alert(mensagens[tipo] + '\n\nEm um sistema real, isso enviaria emails personalizados para os clientes selecionados.');
+        }
+
+        // Event listener para submissão do formulário
+        // Salva ou atualiza o cliente quando o formulário é enviado
+        document.getElementById('formCliente').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('clienteId').value;
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const telefone = document.getElementById('telefone').value;
+            const dataNascimento = document.getElementById('dataNascimento').value;
+            const endereco = document.getElementById('endereco').value;
+            const status = document.getElementById('statusCliente').value;
+            const observacoes = document.getElementById('observacoes').value;
+
+            if (id) {
+                // Editar cliente existente
+                const index = clientes.findIndex(c => c.id === parseInt(id));
+                if (index !== -1) {
+                    clientes[index] = { ...clientes[index], nome, email, telefone, dataNascimento, endereco, status, observacoes };
+                }
+            } else {
+                // Novo cliente
+                const novoId = Math.max(...clientes.map(c => c.id)) + 1;
+                const novoCliente = {
+                    id: novoId,
+                    nome,
+                    email,
+                    telefone,
+                    status,
+                    ultimaCompra: 'Nunca',
+                    totalGasto: 0.00,
+                    dataNascimento,
+                    endereco,
+                    observacoes
+                };
+                clientes.push(novoCliente);
+            }
+
+            atualizarTabela();
+            fecharModal();
+        });
+
+        // Inicializar tabela ao carregar a página
+        window.addEventListener('load', atualizarTabela);
+    </script>
+
+</body>
+</html>

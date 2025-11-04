@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { padding: 20px; }
+        .filters { display: flex; gap: 20px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+        select, button { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
+        button { background-color: #28a745; color: #fff; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        .summary-cards { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 200px; text-align: center; }
+        .card h3 { margin: 0 0 10px 0; color: #007bff; }
+        .card .value { font-size: 2em; font-weight: bold; }
+        .charts-container { display: flex; gap: 20px; flex-wrap: wrap; }
+        .chart { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
+        .chart h3 { margin-top: 0; }
+        .bar-chart { display: flex; align-items: end; height: 250px; margin: 20px 0; }
+        .bar { background-color: #007bff; margin: 0 5px; min-height: 10px; display: flex; align-items: end; justify-content: center; color: white; font-size: 12px; border-radius: 4px 4px 0 0; }
+        .line-chart { position: relative; height: 250px; margin: 20px 0; }
+        .line { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background-color: #28a745; }
+        .point { position: absolute; width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; bottom: -4px; }
+        .table-container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .positive { color: #28a745; }
+        .negative { color: #dc3545; }
+    </style>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1>Leka Artes - Painel Financeiro</h1>
+        <nav>
+            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="suporte.html">Suporte</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <!-- Container principal da página financeira -->
+    <div class="container">
+
+        <!-- Filtros para seleção de período - Permite visualizar dados por mês ou ano -->
+        <div class="filters">
+            <!-- Seleção de período de visualização -->
+            <div>
+                <label for="periodo">Período:</label>
+                <select id="periodo">
+                    <option value="mensal">Mensal</option>
+                    <option value="anual">Anual</option>
+                </select>
+            </div>
+            <!-- Seleção de mês (quando mensal) -->
+            <div>
+                <label for="mes">Mês:</label>
+                <select id="mes">
+                    <option value="01">Janeiro</option>
+                    <option value="02">Fevereiro</option>
+                    <option value="03">Março</option>
+                    <option value="04">Abril</option>
+                    <option value="05">Maio</option>
+                    <option value="06">Junho</option>
+                    <option value="07">Julho</option>
+                    <option value="08">Agosto</option>
+                    <option value="09">Setembro</option>
+                    <option value="10">Outubro</option>
+                    <option value="11">Novembro</option>
+                    <option value="12">Dezembro</option>
+                </select>
+            </div>
+            <!-- Seleção de ano -->
+            <div>
+                <label for="ano">Ano:</label>
+                <select id="ano">
+                    <option value="2024">2024</option>
+                    <option value="2023">2023</option>
+                </select>
+            </div>
+            <!-- Botão para atualizar os dados -->
+            <button onclick="atualizarDados()">Atualizar</button>
+        </div>
+
+        <!-- Cards de resumo financeiro - Indicadores principais de performance -->
+        <div class="summary-cards">
+            <!-- Card: Receita Total - Valor total de vendas no período -->
+            <div class="card">
+                <h3>Receita Total</h3>
+                <div class="value" id="receitaTotal">R$ 45.230,00</div>
+                <p>Período selecionado</p>
+            </div>
+            <!-- Card: Lucro Líquido - Lucro após despesas -->
+            <div class="card">
+                <h3>Lucro Líquido</h3>
+                <div class="value" id="lucroLiquido">R$ 12.450,00</div>
+                <p>Margem de 27%</p>
+            </div>
+            <!-- Card: Despesas - Total de custos e despesas -->
+            <div class="card">
+                <h3>Despesas</h3>
+                <div class="value" id="despesas">R$ 18.780,00</div>
+                <p>Inclui materiais e operacionais</p>
+            </div>
+            <!-- Card: Tickets Médio - Valor médio por venda -->
+            <div class="card">
+                <h3>Ticket Médio</h3>
+                <div class="value" id="ticketMedio">R$ 185,00</div>
+                <p>Por pedido</p>
+            </div>
+        </div>
+
+        <!-- Container de gráficos - Visualizações de dados financeiros -->
+        <div class="charts-container">
+
+            <!-- Gráfico de Receitas por Mês - Barras mostrando evolução mensal -->
+            <div class="chart">
+                <h3>Receitas por Mês</h3>
+                <p>Evolução das vendas mensais</p>
+                <!-- Gráfico de barras simulado com CSS -->
+                <div class="bar-chart" id="receitasChart">
+                    <div class="bar" style="height: 60%;">Jan<br>R$ 8.500</div>
+                    <div class="bar" style="height: 75%;">Fev<br>R$ 9.200</div>
+                    <div class="bar" style="height: 80%;">Mar<br>R$ 10.100</div>
+                    <div class="bar" style="height: 90%;">Abr<br>R$ 11.300</div>
+                    <div class="bar" style="height: 100%;">Mai<br>R$ 12.450</div>
+                    <div class="bar" style="height: 85%;">Jun<br>R$ 10.800</div>
+                </div>
+            </div>
+
+            <!-- Gráfico de Lucro Líquido - Linha mostrando tendência de lucro -->
+            <div class="chart">
+                <h3>Lucro Líquido</h3>
+                <p>Tendência de lucro ao longo do tempo</p>
+                <!-- Gráfico de linha simulado com CSS -->
+                <div class="line-chart" id="lucroChart">
+                    <div class="line"></div>
+                    <div class="point" style="left: 10%; bottom: 20px;"></div>
+                    <div class="point" style="left: 25%; bottom: 40px;"></div>
+                    <div class="point" style="left: 40%; bottom: 60px;"></div>
+                    <div class="point" style="left: 55%; bottom: 80px;"></div>
+                    <div class="point" style="left: 70%; bottom: 100px;"></div>
+                    <div class="point" style="left: 85%; bottom: 90px;"></div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Tabela de produtos mais vendidos - Ranking de produtos por receita -->
+        <div class="table-container">
+            <h3>Produtos Mais Vendidos</h3>
+            <table id="produtosTable">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade Vendida</th>
+                        <th>Receita Total</th>
+                        <th>Margem (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados de exemplo - em sistema real viriam do banco de dados -->
+                    <tr>
+                        <td>Cartões de Visita</td>
+                        <td>2.500</td>
+                        <td class="positive">R$ 7.500,00</td>
+                        <td>35%</td>
+                    </tr>
+                    <tr>
+                        <td>Banners</td>
+                        <td>150</td>
+                        <td class="positive">R$ 12.000,00</td>
+                        <td>45%</td>
+                    </tr>
+                    <tr>
+                        <td>Folhetos</td>
+                        <td>5.000</td>
+                        <td class="positive">R$ 8.000,00</td>
+                        <td>30%</td>
+                    </tr>
+                    <tr>
+                        <td>Panfletos</td>
+                        <td>3.200</td>
+                        <td class="positive">R$ 4.800,00</td>
+                        <td>25%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Tabela de clientes mais ativos - Ranking de clientes por compras -->
+        <div class="table-container">
+            <h3>Clientes que Mais Compraram</h3>
+            <table id="clientesTable">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Total de Pedidos</th>
+                        <th>Valor Total Gasto</th>
+                        <th>Última Compra</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados de exemplo - em sistema real viriam do banco de dados -->
+                    <tr>
+                        <td>João Silva</td>
+                        <td>15</td>
+                        <td class="positive">R$ 4.250,00</td>
+                        <td>2024-01-15</td>
+                    </tr>
+                    <tr>
+                        <td>Maria Santos</td>
+                        <td>12</td>
+                        <td class="positive">R$ 3.800,00</td>
+                        <td>2024-01-14</td>
+                    </tr>
+                    <tr>
+                        <td>Carlos Oliveira</td>
+                        <td>8</td>
+                        <td class="positive">R$ 2.900,00</td>
+                        <td>2024-01-12</td>
+                    </tr>
+                    <tr>
+                        <td>Ana Costa</td>
+                        <td>6</td>
+                        <td class="positive">R$ 1.950,00</td>
+                        <td>2024-01-10</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        // Dados simulados para o painel financeiro
+        // Em um sistema real, esses dados viriam de uma API ou banco de dados
+        const dadosFinanceiros = {
+            mensal: {
+                receita: 45230,
+                lucro: 12450,
+                despesas: 18780,
+                ticket: 185,
+                produtos: [
+                    { nome: 'Cartões de Visita', qtd: 2500, receita: 7500, margem: 35 },
+                    { nome: 'Banners', qtd: 150, receita: 12000, margem: 45 },
+                    { nome: 'Folhetos', qtd: 5000, receita: 8000, margem: 30 },
+                    { nome: 'Panfletos', qtd: 3200, receita: 4800, margem: 25 }
+                ],
+                clientes: [
+                    { nome: 'João Silva', pedidos: 15, total: 4250, ultima: '2024-01-15' },
+                    { nome: 'Maria Santos', pedidos: 12, total: 3800, ultima: '2024-01-14' },
+                    { nome: 'Carlos Oliveira', pedidos: 8, total: 2900, ultima: '2024-01-12' },
+                    { nome: 'Ana Costa', pedidos: 6, total: 1950, ultima: '2024-01-10' }
+                ]
+            },
+            anual: {
+                receita: 285000,
+                lucro: 78500,
+                despesas: 124500,
+                ticket: 195,
+                produtos: [
+                    { nome: 'Cartões de Visita', qtd: 15000, receita: 45000, margem: 35 },
+                    { nome: 'Banners', qtd: 800, receita: 64000, margem: 45 },
+                    { nome: 'Folhetos', qtd: 25000, receita: 40000, margem: 30 },
+                    { nome: 'Panfletos', qtd: 18000, receita: 27000, margem: 25 }
+                ],
+                clientes: [
+                    { nome: 'João Silva', pedidos: 85, total: 24500, ultima: '2024-01-15' },
+                    { nome: 'Maria Santos', pedidos: 72, total: 22800, ultima: '2024-01-14' },
+                    { nome: 'Carlos Oliveira', pedidos: 48, total: 17400, ultima: '2024-01-12' },
+                    { nome: 'Ana Costa', pedidos: 36, total: 11700, ultima: '2024-01-10' }
+                ]
+            }
+        };
+
+        // Função para formatar valores monetários em reais
+        // Converte números para formato brasileiro de moeda
+        function formatarMoeda(valor) {
+            return 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Função para atualizar os dados financeiros na tela
+        // Carrega os dados conforme o período selecionado (mensal/anual)
+        function atualizarDados() {
+            const periodo = document.getElementById('periodo').value;
+            const dados = dadosFinanceiros[periodo];
+
+            // Atualizar cards de resumo
+            document.getElementById('receitaTotal').textContent = formatarMoeda(dados.receita);
+            document.getElementById('lucroLiquido').textContent = formatarMoeda(dados.lucro);
+            document.getElementById('despesas').textContent = formatarMoeda(dados.despesas);
+            document.getElementById('ticketMedio').textContent = formatarMoeda(dados.ticket);
+
+            // Atualizar tabela de produtos
+            const produtosTable = document.querySelector('#produtosTable tbody');
+            produtosTable.innerHTML = '';
+            dados.produtos.forEach(produto => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${produto.nome}</td>
+                    <td>${produto.qtd}</td>
+                    <td class="positive">${formatarMoeda(produto.receita)}</td>
+                    <td>${produto.margem}%</td>
+                `;
+                produtosTable.appendChild(row);
+            });
+
+            // Atualizar tabela de clientes
+            const clientesTable = document.querySelector('#clientesTable tbody');
+            clientesTable.innerHTML = '';
+            dados.clientes.forEach(cliente => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${cliente.nome}</td>
+                    <td>${cliente.pedidos}</td>
+                    <td class="positive">${formatarMoeda(cliente.total)}</td>
+                    <td>${cliente.ultima}</td>
+                `;
+                clientesTable.appendChild(row);
+            });
+
+            // Atualizar gráficos (simulação)
+            atualizarGraficos(dados);
+        }
+
+        // Função para atualizar gráficos (simulada)
+        // Em um sistema real, isso usaria bibliotecas como Chart.js
+        function atualizarGraficos(dados) {
+            // Simulação de atualização dos gráficos
+            // Os gráficos são estáticos neste exemplo, mas em produção seriam dinâmicos
+            console.log('Gráficos atualizados para o período:', dados);
+        }
+
+        // Event listener para mudança de período
+        // Atualiza automaticamente os dados quando o usuário muda o filtro
+        document.getElementById('periodo').addEventListener('change', atualizarDados);
+
+        // Inicializar página com dados mensais
+        window.addEventListener('load', atualizarDados);
+    </script>
+
+</body>
+</html>

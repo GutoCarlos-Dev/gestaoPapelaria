@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
+        header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        nav { display: flex; gap: 20px; }
+        nav a { text-decoration: none; color: #333; font-weight: bold; }
+        nav a:hover { color: #007bff; }
+        .container { padding: 20px; }
+        .filters { display: flex; gap: 20px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+        select, input[type="text"] { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px 15px; background-color: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #218838; }
+        .btn-whatsapp { background-color: #25d366; }
+        .btn-whatsapp:hover { background-color: #128c7e; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-image { width: 100%; height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 48px; position: relative; }
+        .product-badge { position: absolute; top: 10px; right: 10px; background-color: #28a745; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .product-info { padding: 15px; }
+        .product-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .product-price { font-size: 20px; color: #28a745; font-weight: bold; margin-bottom: 10px; }
+        .product-description { color: #666; margin-bottom: 15px; line-height: 1.4; }
+        .product-actions { display: flex; gap: 5px; }
+        .product-actions button { flex: 1; padding: 8px; font-size: 14px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        .product-detail { display: flex; gap: 20px; }
+        .product-detail-image { flex: 1; }
+        .product-detail-image img { width: 100%; border-radius: 8px; }
+        .product-detail-info { flex: 1; }
+        .product-detail-name { font-size: 24px; font-weight: bold; margin-bottom: 10px; }
+        .product-detail-price { font-size: 28px; color: #28a745; font-weight: bold; margin-bottom: 15px; }
+        .product-detail-description { color: #666; line-height: 1.6; margin-bottom: 20px; }
+        .quantity-selector { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .quantity-btn { width: 30px; height: 30px; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 4px; }
+        .quantity-input { width: 60px; text-align: center; padding: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        .specs { margin-top: 20px; }
+        .specs h3 { margin-bottom: 10px; }
+        .specs ul { list-style: none; padding: 0; }
+        .specs li { padding: 5px 0; border-bottom: 1px solid #eee; }
+        .specs li strong { display: inline-block; width: 120px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1>Leka Artes - Catálogo Online</h1>
+        <nav>
+            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+            <a href="catalogo.html">Catálogo</a>
+            <a href="suporte.html">Suporte</a>
+            <a href="login.html">Sair</a>
+        </nav>
+    </header>
+
+    <!-- Container principal da página de catálogo -->
+    <div class="container">
+
+        <!-- Filtros e busca - Permite filtrar produtos por categoria e buscar por nome -->
+        <div class="filters">
+            <!-- Campo de busca por nome do produto -->
+            <input type="text" id="searchInput" placeholder="Buscar produtos..." onkeyup="filtrarProdutos()">
+            <!-- Filtro por categoria -->
+            <select id="categoriaFilter" onchange="filtrarProdutos()">
+                <option value="">Todas as Categorias</option>
+                <option value="cartoes">Cartões de Visita</option>
+                <option value="banners">Banners</option>
+                <option value="folhetos">Folhetos</option>
+                <option value="panfletos">Panfletos</option>
+                <option value="outros">Outros</option>
+            </select>
+            <!-- Filtro por faixa de preço -->
+            <select id="precoFilter" onchange="filtrarProdutos()">
+                <option value="">Todos os Preços</option>
+                <option value="0-50">Até R$ 50,00</option>
+                <option value="50-100">R$ 50,00 - R$ 100,00</option>
+                <option value="100-200">R$ 100,00 - R$ 200,00</option>
+                <option value="200+">Acima de R$ 200,00</option>
+            </select>
+        </div>
+
+        <!-- Grid de produtos - Exibe produtos disponíveis para venda -->
+        <div class="product-grid" id="productGrid">
+            <!-- Cards de produtos serão inseridos dinamicamente pelo JavaScript -->
+        </div>
+
+    </div>
+
+    <!-- Modal de detalhes do produto - Mostra informações completas do produto selecionado -->
+    <div id="modalProduto" class="modal">
+        <div class="modal-content">
+            <!-- Conteúdo do modal será preenchido dinamicamente -->
+            <div id="productDetail"></div>
+            <!-- Botões de ação no modal -->
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button onclick="fecharModal()">Fechar</button>
+                <button class="btn-whatsapp" onclick="pedirOrcamento()">Pedir Orçamento</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos produtos para o catálogo (simulação de dados reais)
+        // Em um sistema real, esses dados viriam de uma API
+        const produtosCatalogo = [
+            {
+                id: 1,
+                nome: 'Cartões de Visita Standard',
+                categoria: 'cartoes',
+                preco: 25.00,
+                descricao: 'Cartões de visita em papel 300g, tamanho standard 9x5cm. Impressão em cores com acabamento profissional.',
+                specs: {
+                    'Material': 'Papel 300g',
+                    'Tamanho': '9x5cm',
+                    'Impressão': '4/4 cores',
+                    'Acabamento': 'Corte preciso',
+                    'Quantidade Mínima': '100 unidades'
+                },
+                imagem: '📇',
+                destaque: true
+            },
+            {
+                id: 2,
+                nome: 'Banner 1x2m',
+                categoria: 'banners',
+                preco: 150.00,
+                descricao: 'Banner em lona 440g, tamanho 1x2m. Ideal para eventos, feiras e divulgação externa.',
+                specs: {
+                    'Material': 'Lona 440g',
+                    'Tamanho': '1x2m',
+                    'Impressão': '6 cores',
+                    'Acabamento': 'Olhal e cordão',
+                    'Instalação': 'Incluída'
+                },
+                imagem: '🏴',
+                destaque: false
+            },
+            {
+                id: 3,
+                nome: 'Folhetos A5',
+                categoria: 'folhetos',
+                preco: 80.00,
+                descricao: 'Folhetos em papel couchê 150g, formato A5. Impressão em cores com brilho ou fosco.',
+                specs: {
+                    'Material': 'Papel couchê 150g',
+                    'Tamanho': 'A5 (21x14,8cm)',
+                    'Impressão': '4/4 cores',
+                    'Acabamento': 'Brilho ou fosco',
+                    'Quantidade Mínima': '500 unidades'
+                },
+                imagem: '📄',
+                destaque: true
+            },
+            {
+                id: 4,
+                nome: 'Panfletos A6',
+                categoria: 'panfletos',
+                preco: 120.00,
+                descricao: 'Panfletos em papel couchê 200g, formato A6. Ideal para mala direta e distribuição.',
+                specs: {
+                    'Material': 'Papel couchê 200g',
+                    'Tamanho': 'A6 (10,5x14,8cm)',
+                    'Impressão': '4/4 cores',
+                    'Acabamento': 'Verniz localizado',
+                    'Quantidade Mínima': '1000 unidades'
+                },
+                imagem: '📋',
+                destaque: false
+            },
+            {
+                id: 5,
+                nome: 'Cartões de Visita Premium',
+                categoria: 'cartoes',
+                preco: 45.00,
+                descricao: 'Cartões premium em papel 350g com verniz localizado e relevo. Acabamento luxuoso.',
+                specs: {
+                    'Material': 'Papel 350g especial',
+                    'Tamanho': '9x5cm',
+                    'Impressão': '4/4 cores + verniz',
+                    'Acabamento': 'Relevo e verniz localizado',
+                    'Quantidade Mínima': '50 unidades'
+                },
+                imagem: '💎',
+                destaque: true
+            },
+            {
+                id: 6,
+                nome: 'Banner Retrátil 2x1m',
+                categoria: 'banners',
+                preco: 280.00,
+                descricao: 'Banner retrátil profissional, tamanho 2x1m. Estrutura em alumínio com bolsa de transporte.',
+                specs: {
+                    'Material': 'Lona 510g + alumínio',
+                    'Tamanho': '2x1m',
+                    'Impressão': '6 cores',
+                    'Estrutura': 'Alumínio 30mm',
+                    'Inclusos': 'Bolsa e base'
+                },
+                imagem: '📏',
+                destaque: false
+            }
+        ];
+
+        // Variável para armazenar o produto atualmente selecionado
+        let produtoSelecionado = null;
+
+        // Função para renderizar o grid de produtos
+        // Cria cards para cada produto disponível no catálogo
+        function renderizarProdutos(produtos = produtosCatalogo) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                card.innerHTML = `
+                    <div class="product-image">
+                        ${produto.imagem}
+                        ${produto.destaque ? '<div class="product-badge">Destaque</div>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${produto.nome}</div>
+                        <div class="product-price">R$ ${produto.preco.toFixed(2)}</div>
+                        <div class="product-description">${produto.descricao.substring(0, 100)}...</div>
+                        <div class="product-actions">
+                            <button onclick="verDetalhes(${produto.id})">Ver Detalhes</button>
+                            <button class="btn-whatsapp" onclick="pedirOrcamento(${produto.id})">Pedir no WhatsApp</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Função para filtrar produtos
+        // Aplica filtros de busca, categoria e preço
+        function filtrarProdutos() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const categoriaFilter = document.getElementById('categoriaFilter').value;
+            const precoFilter = document.getElementById('precoFilter').value;
+
+            let produtosFiltrados = produtosCatalogo.filter(produto => {
+                const matchSearch = produto.nome.toLowerCase().includes(searchTerm) ||
+                                  produto.descricao.toLowerCase().includes(searchTerm);
+                const matchCategoria = !categoriaFilter || produto.categoria === categoriaFilter;
+
+                let matchPreco = true;
+                if (precoFilter) {
+                    if (precoFilter === '0-50') matchPreco = produto.preco <= 50;
+                    else if (precoFilter === '50-100') matchPreco = produto.preco > 50 && produto.preco <= 100;
+                    else if (precoFilter === '100-200') matchPreco = produto.preco > 100 && produto.preco <= 200;
+                    else if (precoFilter === '200+') matchPreco = produto.preco > 200;
+                }
+
+                return matchSearch && matchCategoria && matchPreco;
+            });
+
+            renderizarProdutos(produtosFiltrados);
+        }
+
+        // Função para ver detalhes do produto
+        // Abre modal com informações completas do produto
+        function verDetalhes(id) {
+            const produto = produtosCatalogo.find(p => p.id === id);
+            if (produto) {
+                produtoSelecionado = produto;
+                const detail = document.getElementById('productDetail');
+
+                let specsHtml = '';
+                for (const [key, value] of Object.entries(produto.specs)) {
+                    specsHtml += `<li><strong>${key}:</strong> ${value}</li>`;
+                }
+
+                detail.innerHTML = `
+                    <div class="product-detail">
+                        <div class="product-detail-image">
+                            <div style="width: 100%; height: 300px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; font-size: 72px; border-radius: 8px;">
+                                ${produto.imagem}
+                            </div>
+                        </div>
+                        <div class="product-detail-info">
+                            <div class="product-detail-name">${produto.nome}</div>
+                            <div class="product-detail-price">R$ ${produto.preco.toFixed(2)}</div>
+                            <div class="product-detail-description">${produto.descricao}</div>
+
+                            <div class="quantity-selector">
+                                <button class="quantity-btn" onclick="alterarQuantidade(-1)">-</button>
+                                <input type="number" class="quantity-input" id="quantidade" value="1" min="1" max="1000">
+                                <button class="quantity-btn" onclick="alterarQuantidade(1)">+</button>
+                                <span>Quantidade</span>
+                            </div>
+
+                            <div class="specs">
+                                <h3>Especificações Técnicas</h3>
+                                <ul>${specsHtml}</ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('modalProduto').style.display = 'block';
+            }
+        }
+
+        // Função para alterar quantidade no modal
+        // Aumenta ou diminui a quantidade selecionada
+        function alterarQuantidade(delta) {
+            const input = document.getElementById('quantidade');
+            const novaQuantidade = parseInt(input.value) + delta;
+            if (novaQuantidade >= 1 && novaQuantidade <= 1000) {
+                input.value = novaQuantidade;
+            }
+        }
+
+        // Função para fechar modal
+        // Oculta o modal de detalhes do produto
+        function fecharModal() {
+            document.getElementById('modalProduto').style.display = 'none';
+            produtoSelecionado = null;
+        }
+
+        // Função para pedir orçamento via WhatsApp
+        // Simula o envio de pedido para o WhatsApp da empresa
+        function pedirOrcamento(id = null) {
+            const produto = id ? produtosCatalogo.find(p => p.id === id) : produtoSelecionado;
+            if (produto) {
+                const quantidade = id ? 1 : document.getElementById('quantidade').value;
+                const mensagem = `Olá! Gostaria de solicitar um orçamento para:\n\n*${produto.nome}*\nQuantidade: ${quantidade}\nPreço unitário: R$ ${produto.preco.toFixed(2)}\n\nPoderia me fornecer mais informações?`;
+
+                // Em um sistema real, isso abriria o WhatsApp
+                // window.open(`https://wa.me/5511999999999?text=${encodeURIComponent(mensagem)}`);
+
+                alert(`Mensagem preparada para WhatsApp:\n\n${mensagem}\n\nEm um sistema real, isso abriria o WhatsApp automaticamente.`);
+            }
+        }
+
+        // Inicializar catálogo ao carregar a página
+        window.addEventListener('load', () => {
+            renderizarProdutos();
+        });
+    </script>
+
+</body>
+</html>
