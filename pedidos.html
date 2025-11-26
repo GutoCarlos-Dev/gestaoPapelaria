@@ -282,10 +282,21 @@
 
         // Função para excluir pedido
         // Remove o pedido da lista após confirmação do usuário
-        function excluirPedido(id) {
+        async function excluirPedido(id) {
             if (confirm('Tem certeza que deseja excluir este pedido?')) {
-                pedidos = pedidos.filter(p => p.id !== id);
-                atualizarTabela();
+                const { error } = await supabaseClient
+                    .from('pedidos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Erro ao excluir pedido:', error.message);
+                    alert('Não foi possível excluir o pedido. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Pedido excluído com sucesso!');
+                    // Recarrega a lista de pedidos do banco
+                    carregarPedidos();
+                }
             }
         }
 
@@ -294,7 +305,8 @@
         function enviarWhatsApp(id) {
             const pedido = pedidos.find(p => p.id === id);
             if (pedido) {
-                const mensagem = `Olá ${pedido.cliente}, seu pedido #${pedido.id} (${pedido.produto}) está ${pedido.status}. Valor: R$ ${pedido.valor.toFixed(2)}`;
+                const statusFormatado = pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1);
+                const mensagem = `Olá ${pedido.cliente_nome}, seu pedido #${pedido.id.toString().padStart(3, '0')} (${pedido.produto_nome}) está ${statusFormatado}. Valor: R$ ${pedido.valor.toFixed(2)}`;
                 // Em um sistema real, isso abriria o WhatsApp com a mensagem
                 alert(`Mensagem preparada para WhatsApp:\n\n${mensagem}\n\n(Em um sistema real, isso abriria o WhatsApp)`);
             }
@@ -307,15 +319,16 @@
             tbody.innerHTML = '';
 
             pedidos.forEach(pedido => {
+                const dataFormatada = pedido.created_at ? new Date(pedido.created_at).toLocaleDateString('pt-BR') : 'N/A';
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${pedido.id.toString().padStart(3, '0')}</td>
-                    <td>${pedido.cliente}</td>
-                    <td>${pedido.produto}</td>
+                    <td>${pedido.cliente_nome || 'Cliente não encontrado'}</td>
+                    <td>${pedido.produto_nome || 'Produto não encontrado'}</td>
                     <td>${pedido.quantidade}</td>
                     <td>R$ ${pedido.valor.toFixed(2)}</td>
                     <td><span class="status ${pedido.status}">${pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1)}</span></td>
-                    <td>${pedido.data}</td>
+                    <td>${dataFormatada}</td>
                     <td>
                         <button onclick="editarPedido(${pedido.id})">Editar</button>
                         <button class="btn-danger" onclick="excluirPedido(${pedido.id})">Excluir</button>
@@ -340,45 +353,174 @@
 
         // Event listener para submissão do formulário
         // Salva ou atualiza o pedido quando o formulário é enviado
-        document.getElementById('formPedido').addEventListener('submit', function(e) {
+        document.getElementById('formPedido').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const id = document.getElementById('pedidoId').value;
-            const cliente = document.getElementById('cliente').value;
-            const produto = document.getElementById('produto').value;
+            // Validação adicional
+            const clienteId = document.getElementById('cliente').value;
+            const produtoId = document.getElementById('produto').value;
             const quantidade = parseInt(document.getElementById('quantidade').value);
             const valor = parseFloat(document.getElementById('valor').value);
-            const status = document.getElementById('status').value;
-            const observacoes = document.getElementById('observacoes').value;
 
-            if (id) {
-                // Editar pedido existente
-                const index = pedidos.findIndex(p => p.id === parseInt(id));
-                if (index !== -1) {
-                    pedidos[index] = { ...pedidos[index], cliente, produto, quantidade, valor, status, observacoes };
-                }
-            } else {
-                // Novo pedido
-                const novoId = Math.max(...pedidos.map(p => p.id)) + 1;
-                const novoPedido = {
-                    id: novoId,
-                    cliente,
-                    produto,
-                    quantidade,
-                    valor,
-                    status,
-                    data: new Date().toISOString().split('T')[0],
-                    observacoes
-                };
-                pedidos.push(novoPedido);
+            // Verificar se cliente foi selecionado
+            if (!clienteId) {
+                alert('Por favor, selecione um cliente.');
+                document.getElementById('cliente').focus();
+                return;
             }
 
-            atualizarTabela();
-            fecharModal();
+            // Verificar se produto foi selecionado
+            if (!produtoId) {
+                alert('Por favor, selecione um produto.');
+                document.getElementById('produto').focus();
+                return;
+            }
+
+            // Verificar se quantidade é válida
+            if (!quantidade || quantidade < 1) {
+                alert('A quantidade deve ser maior que zero.');
+                document.getElementById('quantidade').focus();
+                return;
+            }
+
+            // Verificar se valor é válido
+            if (!valor || valor < 0) {
+                alert('O valor deve ser maior ou igual a zero.');
+                document.getElementById('valor').focus();
+                return;
+            }
+
+            const id = document.getElementById('pedidoId').value;
+
+            // Mostrar feedback de carregamento
+            const submitButton = document.querySelector('#formPedido button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Salvando...';
+            submitButton.disabled = true;
+
+            // Coleta os dados do formulário em um objeto
+            const dadosPedido = {
+                cliente_id: parseInt(clienteId),
+                produto_id: parseInt(produtoId),
+                quantidade: quantidade,
+                valor: valor,
+                status: document.getElementById('status').value,
+                observacoes: document.getElementById('observacoes').value.trim()
+            };
+
+            let error;
+
+            try {
+                if (id) {
+                    // Lógica para ATUALIZAR um pedido existente
+                    const { error: updateError } = await supabaseClient
+                        .from('pedidos')
+                        .update(dadosPedido)
+                        .eq('id', id);
+                    error = updateError;
+                } else {
+                    // Lógica para INSERIR um novo pedido
+                    const { error: insertError } = await supabaseClient
+                        .from('pedidos')
+                        .insert([dadosPedido]);
+                    error = insertError;
+                }
+
+                if (error) {
+                    console.error('Erro ao salvar pedido:', error.message);
+                    alert('Não foi possível salvar o pedido. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Pedido salvo com sucesso!');
+                    fecharModal();
+                    // Recarrega a lista de pedidos do banco para exibir a alteração
+                    carregarPedidos();
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                alert('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
         });
 
+        // Função para carregar os pedidos do Supabase com joins
+        async function carregarPedidos() {
+            const { data, error } = await supabaseClient
+                .from('pedidos')
+                .select(`
+                    *,
+                    clientes!inner(nome),
+                    produtos!inner(nome)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao carregar pedidos:', error.message);
+                alert('Não foi possível carregar os pedidos.');
+            } else {
+                // Transforma os dados para incluir os nomes
+                pedidos = data.map(pedido => ({
+                    ...pedido,
+                    cliente_nome: pedido.clientes?.nome || 'Cliente não encontrado',
+                    produto_nome: pedido.produtos?.nome || 'Produto não encontrado'
+                }));
+                // Atualiza a tabela com os dados reais
+                atualizarTabela();
+            }
+        }
+
+        // Função para carregar clientes no dropdown
+        async function carregarClientesDropdown() {
+            const { data, error } = await supabaseClient
+                .from('clientes')
+                .select('id, nome')
+                .order('nome');
+
+            if (error) {
+                console.error('Erro ao carregar clientes:', error.message);
+            } else {
+                const selectCliente = document.getElementById('cliente');
+                // Mantém a opção padrão
+                selectCliente.innerHTML = '<option value="">Selecione um cliente</option>';
+                data.forEach(cliente => {
+                    const option = document.createElement('option');
+                    option.value = cliente.id;
+                    option.textContent = cliente.nome;
+                    selectCliente.appendChild(option);
+                });
+            }
+        }
+
+        // Função para carregar produtos no dropdown
+        async function carregarProdutosDropdown() {
+            const { data, error } = await supabaseClient
+                .from('produtos')
+                .select('id, nome')
+                .order('nome');
+
+            if (error) {
+                console.error('Erro ao carregar produtos:', error.message);
+            } else {
+                const selectProduto = document.getElementById('produto');
+                // Mantém a opção padrão
+                selectProduto.innerHTML = '<option value="">Selecione um produto</option>';
+                data.forEach(produto => {
+                    const option = document.createElement('option');
+                    option.value = produto.id;
+                    option.textContent = produto.nome;
+                    selectProduto.appendChild(option);
+                });
+            }
+        }
+
         // Inicializar tabela ao carregar a página
-        window.addEventListener('load', atualizarTabela);
+        window.addEventListener('load', () => {
+            carregarClientesDropdown();
+            carregarProdutosDropdown();
+            carregarPedidos();
+        });
     </script>
     <script>
         // Script de Proteção e Logout
@@ -395,6 +537,10 @@
                 window.location.href = 'index.html';
             } else {
                 document.getElementById('userEmail').textContent = session.user.email;
+                // Carrega os dados após confirmar que o usuário está logado
+                carregarClientesDropdown();
+                carregarProdutosDropdown();
+                carregarPedidos();
             }
         });
 
