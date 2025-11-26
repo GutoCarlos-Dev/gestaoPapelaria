@@ -337,7 +337,7 @@
 
                 <!-- Campo para upload de foto do produto -->
                 <label for="fotoProduto">Foto do Produto (opcional):</label>
-                <input type="file" id="fotoProduto" accept="image/*" onchange="previewImagem(event)">
+                <input type="file" id="fotoProduto" accept="image/*" onchange="previewImagem(this)">
                 <div id="previewContainer" style="margin-top: 10px; display: none;">
                     <img id="previewImagem" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;" alt="Preview da imagem">
                 </div>
