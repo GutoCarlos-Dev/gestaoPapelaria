@@ -23,7 +23,12 @@
 
         /* Header */
         header { background-color: var(--card-background); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
-        header h1 { font-size: 1.5em; color: var(--primary-color); margin: 0; }
+        header h1 { font-size: 1.5em; color: var(--primary-color); margin: 0; display: flex; align-items: center; gap: 10px; }
+        header h1 img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
         nav { display: flex; align-items: center; gap: 25px; }
         nav a { text-decoration: none; color: var(--text-light); font-weight: 600; font-size: 0.9em; transition: color 0.2s; }
         nav a:hover, nav a.active { color: var(--primary-color); }
@@ -101,7 +106,7 @@
 
     <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
     <header>
-        <h1>Leka Artes - Controle de Pedidos</h1>
+        <h1><img src="imagens/logo letras.jpeg" alt="Leka Artes Logo" title="Leka Artes"> Controle de Pedidos</h1>
         <nav>
             <a href="dashboard.html">Dashboard</a>
             <a href="pedidos.html" class="active">Pedidos</a>
