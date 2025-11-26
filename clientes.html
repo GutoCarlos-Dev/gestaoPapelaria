@@ -348,7 +348,7 @@
                 document.getElementById('nome').value = cliente.nome;
                 document.getElementById('email').value = cliente.email;
                 document.getElementById('telefone').value = cliente.telefone;
-                document.getElementById('dataNascimento').value = cliente.dataNascimento || '';
+                document.getElementById('dataNascimento').value = cliente.data_nascimento ? cliente.data_nascimento.split('T')[0] : '';
                 document.getElementById('endereco').value = cliente.endereco || '';
                 document.getElementById('statusCliente').value = cliente.status;
                 document.getElementById('observacoes').value = cliente.observacoes || '';
@@ -358,10 +358,21 @@
 
         // Função para excluir cliente
         // Remove o cliente da lista após confirmação do usuário
-        function excluirCliente(id) {
+        async function excluirCliente(id) {
             if (confirm('Tem certeza que deseja excluir este cliente?')) {
-                clientes = clientes.filter(c => c.id !== id);
-                atualizarTabela();
+                const { error } = await supabaseClient
+                    .from('clientes')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Erro ao excluir cliente:', error.message);
+                    alert('Não foi possível excluir o cliente. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Cliente excluído com sucesso!');
+                    // Recarrega a lista de clientes do banco
+                    carregarClientes();
+                }
             }
         }
 
@@ -371,19 +382,16 @@
             const cliente = clientes.find(c => c.id === id);
             if (cliente) {
                 const historicoContent = document.getElementById('historicoContent');
+                const dataNascimento = cliente.data_nascimento ? new Date(cliente.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado';
                 historicoContent.innerHTML = `
                     <h3>${cliente.nome}</h3>
                     <p><strong>Email:</strong> ${cliente.email}</p>
                     <p><strong>Telefone:</strong> ${cliente.telefone}</p>
-                    <p><strong>Status:</strong> ${cliente.status}</p>
-                    <p><strong>Total Gasto:</strong> R$ ${cliente.totalGasto.toFixed(2)}</p>
-                    <p><strong>Última Compra:</strong> ${cliente.dataNascimento}</p>
-                    <h4>Últimas Compras:</h4>
-                    <ul>
-                        <li>Cartões de Visita - R$ 150,00 (15/01/2024)</li>
-                        <li>Banners - R$ 300,00 (10/01/2024)</li>
-                        <li>Folhetos - R$ 200,00 (05/01/2024)</li>
-                    </ul>
+                    <p><strong>Status:</strong> ${cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1)}</p>
+                    <p><strong>Data de Nascimento:</strong> ${dataNascimento}</p>
+                    <p><strong>Endereço:</strong> ${cliente.endereco || 'Não informado'}</p>
+                    <h4>Histórico de Compras:</h4>
+                    <p>Histórico de compras será implementado quando integrado com o sistema de pedidos.</p>
                     <h4>Observações:</h4>
                     <p>${cliente.observacoes || 'Nenhuma observação registrada.'}</p>
                 `;
@@ -449,48 +457,111 @@
 
         // Event listener para submissão do formulário
         // Salva ou atualiza o cliente quando o formulário é enviado
-        document.getElementById('formCliente').addEventListener('submit', function(e) {
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            const id = document.getElementById('clienteId').value;
-            const nome = document.getElementById('nome').value;
-            const email = document.getElementById('email').value;
-            const telefone = document.getElementById('telefone').value;
-            const dataNascimento = document.getElementById('dataNascimento').value;
-            const endereco = document.getElementById('endereco').value;
-            const status = document.getElementById('statusCliente').value;
-            const observacoes = document.getElementById('observacoes').value;
+            // Validação adicional
+            const nome = document.getElementById('nome').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
 
-            if (id) {
-                // Editar cliente existente
-                const index = clientes.findIndex(c => c.id === parseInt(id));
-                if (index !== -1) {
-                    clientes[index] = { ...clientes[index], nome, email, telefone, dataNascimento, endereco, status, observacoes };
-                }
-            } else {
-                // Novo cliente
-                const novoId = Math.max(...clientes.map(c => c.id)) + 1;
-                const novoCliente = {
-                    id: novoId,
-                    nome,
-                    email,
-                    telefone,
-                    status,
-                    ultimaCompra: 'Nunca',
-                    totalGasto: 0.00,
-                    dataNascimento,
-                    endereco,
-                    observacoes
-                };
-                clientes.push(novoCliente);
+            // Verificar se nome não está vazio
+            if (!nome) {
+                alert('O nome do cliente é obrigatório.');
+                document.getElementById('nome').focus();
+                return;
             }
 
-            atualizarTabela();
-            fecharModal();
+            // Verificar se email é válido
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Por favor, insira um email válido.');
+                document.getElementById('email').focus();
+                return;
+            }
+
+            // Verificar se telefone não está vazio
+            if (!telefone) {
+                alert('O telefone do cliente é obrigatório.');
+                document.getElementById('telefone').focus();
+                return;
+            }
+
+            const id = document.getElementById('clienteId').value;
+
+            // Mostrar feedback de carregamento
+            const submitButton = document.querySelector('#formCliente button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Salvando...';
+            submitButton.disabled = true;
+
+            // Coleta os dados do formulário em um objeto
+            const dadosCliente = {
+                nome: nome,
+                email: email,
+                telefone: telefone,
+                data_nascimento: document.getElementById('dataNascimento').value || null,
+                endereco: document.getElementById('endereco').value.trim(),
+                status: document.getElementById('statusCliente').value,
+                observacoes: document.getElementById('observacoes').value.trim()
+            };
+
+            let error;
+
+            try {
+                if (id) {
+                    // Lógica para ATUALIZAR um cliente existente
+                    const { error: updateError } = await supabaseClient
+                        .from('clientes')
+                        .update(dadosCliente)
+                        .eq('id', id);
+                    error = updateError;
+                } else {
+                    // Lógica para INSERIR um novo cliente
+                    const { error: insertError } = await supabaseClient
+                        .from('clientes')
+                        .insert([dadosCliente]);
+                    error = insertError;
+                }
+
+                if (error) {
+                    console.error('Erro ao salvar cliente:', error.message);
+                    alert('Não foi possível salvar o cliente. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Cliente salvo com sucesso!');
+                    fecharModal();
+                    // Recarrega a lista de clientes do banco para exibir a alteração
+                    carregarClientes();
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                alert('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
         });
 
+        // Função para carregar os clientes do Supabase
+        async function carregarClientes() {
+            const { data, error } = await supabaseClient
+                .from('clientes')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao carregar clientes:', error.message);
+                alert('Não foi possível carregar os clientes.');
+            } else {
+                clientes = data;
+                // Atualiza a tabela com os dados reais
+                atualizarTabela();
+            }
+        }
+
         // Inicializar tabela ao carregar a página
-        window.addEventListener('load', atualizarTabela);
+        window.addEventListener('load', carregarClientes);
     </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
@@ -508,6 +579,8 @@
                 window.location.href = 'index.html';
             } else {
                 document.getElementById('userEmail').textContent = session.user.email;
+                // Carrega os clientes após confirmar que o usuário está logado
+                carregarClientes();
             }
         });
 
