@@ -440,6 +440,7 @@
             submitButton.disabled = true;
 
             // Coleta os dados do formulário em um objeto
+            // Usando nomes de colunas mais simples para evitar problemas de cache de schema
             const dadosPedido = {
                 cliente_id: parseInt(clienteId),
                 produto_id: parseInt(produtoId),
@@ -457,14 +458,38 @@
                     const { error: updateError } = await supabaseClient
                         .from('pedidos')
                         .update(dadosPedido)
-                        .eq('id', id);
+                        .eq('id', parseInt(id));
                     error = updateError;
                 } else {
                     // Lógica para INSERIR um novo pedido
-                    const { error: insertError } = await supabaseClient
+                    // Tentativa com abordagem mais básica
+                    const { data, error: insertError } = await supabaseClient
                         .from('pedidos')
-                        .insert([dadosPedido]);
-                    error = insertError;
+                        .insert(dadosPedido)
+                        .select();
+
+                    if (insertError) {
+                        // Se falhar, tentar uma abordagem alternativa
+                        console.warn('Tentativa padrão falhou, tentando abordagem alternativa:', insertError.message);
+
+                        // Criar um novo objeto sem especificar colunas
+                        const dadosSimples = {
+                            cliente_id: parseInt(clienteId),
+                            produto_id: parseInt(produtoId),
+                            quantidade: quantidade,
+                            valor: valor,
+                            status: document.getElementById('status').value,
+                            observacoes: document.getElementById('observacoes').value.trim()
+                        };
+
+                        const { data: dataAlt, error: errorAlt } = await supabaseClient
+                            .from('pedidos')
+                            .insert([dadosSimples]);
+
+                        error = errorAlt;
+                    } else {
+                        error = null;
+                    }
                 }
 
                 if (error) {
