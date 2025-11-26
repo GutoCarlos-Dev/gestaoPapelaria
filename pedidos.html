@@ -270,8 +270,8 @@
             const pedido = pedidos.find(p => p.id === id);
             if (pedido) {
                 document.getElementById('pedidoId').value = pedido.id;
-                document.getElementById('cliente').value = pedido.cliente;
-                document.getElementById('produto').value = pedido.produto;
+                document.getElementById('cliente').value = pedido.cliente_id;
+                document.getElementById('produto').value = pedido.produto_id;
                 document.getElementById('quantidade').value = pedido.quantidade;
                 document.getElementById('valor').value = pedido.valor;
                 document.getElementById('status').value = pedido.status;
@@ -445,29 +445,56 @@
             }
         });
 
-        // Função para carregar os pedidos do Supabase com joins
+        // Função para carregar os pedidos do Supabase
         async function carregarPedidos() {
-            const { data, error } = await supabaseClient
-                .from('pedidos')
-                .select(`
-                    *,
-                    clientes!inner(nome),
-                    produtos!inner(nome)
-                `)
-                .order('created_at', { ascending: false });
+            try {
+                // Primeiro, carrega os pedidos
+                const { data: pedidosData, error: pedidosError } = await supabaseClient
+                    .from('pedidos')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-            if (error) {
-                console.error('Erro ao carregar pedidos:', error.message);
-                alert('Não foi possível carregar os pedidos.');
-            } else {
+                if (pedidosError) {
+                    console.error('Erro ao carregar pedidos:', pedidosError.message);
+                    alert('Não foi possível carregar os pedidos.');
+                    return;
+                }
+
+                // Carrega todos os clientes e produtos para fazer o mapeamento
+                const [clientesResponse, produtosResponse] = await Promise.all([
+                    supabaseClient.from('clientes').select('id, nome'),
+                    supabaseClient.from('produtos').select('id, nome')
+                ]);
+
+                if (clientesResponse.error || produtosResponse.error) {
+                    console.error('Erro ao carregar dados relacionados:', clientesResponse.error || produtosResponse.error);
+                    alert('Erro ao carregar dados relacionados.');
+                    return;
+                }
+
+                // Cria mapas para busca rápida
+                const clientesMap = {};
+                clientesResponse.data.forEach(cliente => {
+                    clientesMap[cliente.id] = cliente.nome;
+                });
+
+                const produtosMap = {};
+                produtosResponse.data.forEach(produto => {
+                    produtosMap[produto.id] = produto.nome;
+                });
+
                 // Transforma os dados para incluir os nomes
-                pedidos = data.map(pedido => ({
+                pedidos = pedidosData.map(pedido => ({
                     ...pedido,
-                    cliente_nome: pedido.clientes?.nome || 'Cliente não encontrado',
-                    produto_nome: pedido.produtos?.nome || 'Produto não encontrado'
+                    cliente_nome: clientesMap[pedido.cliente_id] || 'Cliente não encontrado',
+                    produto_nome: produtosMap[pedido.produto_id] || 'Produto não encontrado'
                 }));
+
                 // Atualiza a tabela com os dados reais
                 atualizarTabela();
+            } catch (error) {
+                console.error('Erro inesperado ao carregar pedidos:', error);
+                alert('Erro inesperado ao carregar os pedidos.');
             }
         }
 
