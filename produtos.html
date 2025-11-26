@@ -499,46 +499,49 @@
 
         // Event listener para submissão do formulário
         // Salva ou atualiza o produto quando o formulário é enviado
-        document.getElementById('formProduto').addEventListener('submit', function(e) {
+        document.getElementById('formProduto').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const id = document.getElementById('produtoId').value;
-            const nome = document.getElementById('nome').value;
-            const categoria = document.getElementById('categoria').value;
-            const preco = parseFloat(document.getElementById('preco').value);
-            const custo = parseFloat(document.getElementById('custo').value);
-            const estoque = parseInt(document.getElementById('estoque').value);
-            const estoqueMinimo = parseInt(document.getElementById('estoqueMinimo').value);
-            const descricao = document.getElementById('descricao').value;
-            const status = document.getElementById('statusProduto').value;
+            
+            // Coleta os dados do formulário em um objeto
+            const dadosProduto = {
+                nome: document.getElementById('nome').value,
+                categoria: document.getElementById('categoria').value,
+                preco: parseFloat(document.getElementById('preco').value),
+                custo: parseFloat(document.getElementById('custo').value),
+                estoque: parseInt(document.getElementById('estoque').value),
+                estoque_minimo: parseInt(document.getElementById('estoqueMinimo').value), // Corrigido para o nome da coluna no DB
+                descricao: document.getElementById('descricao').value,
+                status: document.getElementById('statusProduto').value
+            };
+
+            let error;
 
             if (id) {
-                // Editar produto existente
-                const index = produtos.findIndex(p => p.id === parseInt(id));
-                if (index !== -1) {
-                    produtos[index] = { ...produtos[index], nome, categoria, preco, custo, estoque, estoqueMinimo, descricao, status };
-                }
+                // Lógica para ATUALIZAR um produto existente
+                const { error: updateError } = await supabaseClient
+                    .from('produtos')
+                    .update(dadosProduto)
+                    .eq('id', id);
+                error = updateError;
             } else {
-                // Novo produto
-                const novoId = Math.max(...produtos.map(p => p.id)) + 1;
-                const novoProduto = {
-                    id: novoId,
-                    nome,
-                    categoria,
-                    preco,
-                    custo,
-                    estoque,
-                    estoqueMinimo,
-                    descricao,
-                    status
-                };
-                produtos.push(novoProduto);
+                // Lógica para INSERIR um novo produto
+                const { error: insertError } = await supabaseClient
+                    .from('produtos')
+                    .insert([dadosProduto]);
+                error = insertError;
             }
 
-            atualizarGrid();
-            atualizarTabelaEstoque();
-            atualizarEstatisticas();
-            fecharModal();
+            if (error) {
+                console.error('Erro ao salvar produto:', error.message);
+                alert('Não foi possível salvar o produto. Verifique o console para mais detalhes.');
+            } else {
+                alert('Produto salvo com sucesso!');
+                fecharModal();
+                // Recarrega a lista de produtos do banco para exibir a alteração
+                carregarProdutos();
+            }
         });
     </script>
     <script>
