@@ -7,15 +7,16 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
         header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { color: #896838; }
         nav { display: flex; gap: 20px; }
         nav a { text-decoration: none; color: #333; font-weight: bold; }
-        nav a:hover { color: #007bff; }
+        nav a:hover { color: #F766C4; }
         .container { padding: 20px; }
         .actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        button { padding: 10px 15px; background-color: #28a745; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-        button:hover { background-color: #218838; }
-        .btn-secondary { background-color: #007bff; }
-        .btn-secondary:hover { background-color: #0056b3; }
+        button { padding: 10px 15px; background-color: #896838; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #6d532d; }
+        .btn-secondary { background-color: #C5AA7F; }
+        .btn-secondary:hover { background-color: #b3986f; }
         .btn-warning { background-color: #ffc107; color: #212529; }
         .btn-warning:hover { background-color: #e0a800; }
         .btn-danger { background-color: #dc3545; }
@@ -27,7 +28,7 @@
         .product-image { width: 100%; height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 48px; }
         .product-info { padding: 15px; }
         .product-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
-        .product-price { font-size: 16px; color: #28a745; font-weight: bold; margin-bottom: 10px; }
+        .product-price { font-size: 16px; color: #896838; font-weight: bold; margin-bottom: 10px; }
         .product-stock { font-size: 14px; margin-bottom: 10px; }
         .stock-low { color: #dc3545; }
         .stock-normal { color: #28a745; }
@@ -41,16 +42,16 @@
         .form-row { display: flex; gap: 10px; }
         .form-row > * { flex: 1; }
         .alert { padding: 10px; border-radius: 4px; margin-bottom: 20px; }
-        .alert-warning { background-color: #fff3cd; color: #856404; border: 1px solid #ffeaa7; }
-        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .alert-warning { background-color: #FBD2D1; color: #896838; border: 1px solid #F766C4; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Mantido verde para sucesso */
         .tabs { display: flex; margin-bottom: 20px; }
         .tab { padding: 10px 20px; background-color: #f8f9fa; border: none; cursor: pointer; border-radius: 4px 4px 0 0; }
-        .tab.active { background-color: #fff; border-bottom: 2px solid #007bff; }
+        .tab.active { background-color: #fff; border-bottom: 2px solid #896838; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .stat-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
-        .stat-value { font-size: 2em; font-weight: bold; color: #007bff; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #896838; }
     </style>
 </head>
 <body>
@@ -175,19 +176,19 @@
                 <h3>Distribuição por Categoria</h3>
                 <div style="display: flex; justify-content: space-around; align-items: end; height: 200px; margin-top: 20px;">
                     <div style="text-align: center;">
-                        <div style="width: 40px; height: 120px; background-color: #007bff; margin: 0 auto 10px;"></div>
+                        <div style="width: 40px; height: 120px; background-color: #896838; margin: 0 auto 10px;"></div>
                         <span>Cartões (40%)</span>
                     </div>
                     <div style="text-align: center;">
-                        <div style="width: 40px; height: 80px; background-color: #28a745; margin: 0 auto 10px;"></div>
+                        <div style="width: 40px; height: 80px; background-color: #C5AA7F; margin: 0 auto 10px;"></div>
                         <span>Banners (25%)</span>
                     </div>
                     <div style="text-align: center;">
-                        <div style="width: 40px; height: 60px; background-color: #ffc107; margin: 0 auto 10px;"></div>
+                        <div style="width: 40px; height: 60px; background-color: #D5BE8E; margin: 0 auto 10px;"></div>
                         <span>Folhetos (20%)</span>
                     </div>
                     <div style="text-align: center;">
-                        <div style="width: 40px; height: 40px; background-color: #dc3545; margin: 0 auto 10px;"></div>
+                        <div style="width: 40px; height: 40px; background-color: #FBD2D1; margin: 0 auto 10px;"></div>
                         <span>Outros (15%)</span>
                     </div>
                 </div>

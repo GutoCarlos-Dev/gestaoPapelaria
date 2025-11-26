@@ -7,26 +7,27 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; }
         header { background-color: #fff; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        header h1 { color: #896838; }
         nav { display: flex; gap: 20px; }
         nav a { text-decoration: none; color: #333; font-weight: bold; }
-        nav a:hover { color: #007bff; }
+        nav a:hover { color: #F766C4; }
         .container { padding: 20px; }
         .filters { display: flex; gap: 20px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
         select, button { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; }
-        button { background-color: #28a745; color: #fff; cursor: pointer; }
-        button:hover { background-color: #218838; }
+        button { background-color: #896838; color: #fff; cursor: pointer; }
+        button:hover { background-color: #6d532d; }
         .summary-cards { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
         .card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 200px; text-align: center; }
-        .card h3 { margin: 0 0 10px 0; color: #007bff; }
+        .card h3 { margin: 0 0 10px 0; color: #C5AA7F; }
         .card .value { font-size: 2em; font-weight: bold; }
         .charts-container { display: flex; gap: 20px; flex-wrap: wrap; }
         .chart { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); flex: 1; min-width: 300px; }
         .chart h3 { margin-top: 0; }
         .bar-chart { display: flex; align-items: end; height: 250px; margin: 20px 0; }
-        .bar { background-color: #007bff; margin: 0 5px; min-height: 10px; display: flex; align-items: end; justify-content: center; color: white; font-size: 12px; border-radius: 4px 4px 0 0; }
+        .bar { background-color: #C5AA7F; margin: 0 5px; min-height: 10px; display: flex; align-items: end; justify-content: center; color: white; font-size: 12px; border-radius: 4px 4px 0 0; }
         .line-chart { position: relative; height: 250px; margin: 20px 0; }
-        .line { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background-color: #28a745; }
-        .point { position: absolute; width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; bottom: -4px; }
+        .line { position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background-color: #896838; }
+        .point { position: absolute; width: 8px; height: 8px; background-color: #896838; border-radius: 50%; bottom: -4px; }
         .table-container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
@@ -133,7 +134,7 @@
                 <h3>Receitas por Mês</h3>
                 <p>Evolução das vendas mensais</p>
                 <!-- Gráfico de barras simulado com CSS -->
-                <div class="bar-chart" id="receitasChart">
+                <div class="bar-chart" id="receitasChart" style="gap: 5px;">
                     <div class="bar" style="height: 60%;">Jan<br>R$ 8.500</div>
                     <div class="bar" style="height: 75%;">Fev<br>R$ 9.200</div>
                     <div class="bar" style="height: 80%;">Mar<br>R$ 10.100</div>
