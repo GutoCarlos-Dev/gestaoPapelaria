@@ -21,7 +21,7 @@
 <body>
 
     <!-- Container principal do formulário de login -->
-    <div class="login-container">
+    <div class="login-container" id="loginContainer">
         <!-- Título da página de login -->
         <h1>Entrar no Leka Artes</h1>
 
@@ -87,17 +87,12 @@
     <script>
         // Função para alternar entre formulários de login e cadastro
         // Esta função mostra/oculta os containers apropriados quando o usuário clica nos links
-        function toggleForms() {
-            const loginContainer = document.querySelector('.login-container');
-            const registerContainer = document.getElementById('registerContainer');
+        const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
 
-            if (loginContainer.style.display !== 'none') {
-                loginContainer.style.display = 'none';
-                registerContainer.style.display = 'block';
-            } else {
-                loginContainer.style.display = 'block';
-                registerContainer.style.display = 'none';
-            }
+        function toggleForms() {
+            loginContainer.style.display = loginContainer.style.display === 'none' ? 'block' : 'none';
+            registerContainer.style.display = registerContainer.style.display === 'block' ? 'none' : 'block';
         }
 
         // Adiciona event listeners aos links de alternância
@@ -121,10 +116,11 @@
             const errorDiv = document.getElementById('error');
 
             if (email && password) {
-                // Simulação de validação - em um sistema real, isso seria enviado para o servidor
+                // Simulação de validação para um único usuário.
+                // ATENÇÃO: Esta validação é feita no navegador e não é segura para produção.
                 if (email === 'admin@lekaartes.com' && password === '123456') {
                     alert('Login realizado com sucesso! Redirecionando para o dashboard...');
-                    window.location.href = 'dashboard.html';
+                    window.location.href = 'dashboard.html'; // Redireciona para o dashboard
                 } else {
                     errorDiv.style.display = 'block';
                 }
