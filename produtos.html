@@ -474,12 +474,22 @@
         // Função para atualizar estatísticas
         // Calcula e exibe estatísticas dos produtos
         function atualizarEstatisticas() {
-            const totalProdutos = produtos.length;
-            const estoqueBaixo = produtos.filter(p => p.estoque <= p.estoqueMinimo).length;
+            const totalProdutos = produtos.length;            
+            document.getElementById('totalProdutos').textContent = totalProdutos;
+
+            if (totalProdutos === 0) {
+                // Se não houver produtos, define valores padrão para as estatísticas
+                document.getElementById('estoqueBaixo').textContent = 0;
+                document.getElementById('valorEstoque').textContent = 'R$ 0,00';
+                document.getElementById('maisVendidos').textContent = 'N/A';
+                return; // Sai da função para evitar erros
+            }
+
+            // Se houver produtos, continua com os cálculos
+            const estoqueBaixo = produtos.filter(p => p.estoque <= p.estoque_minimo).length;
             const valorEstoque = produtos.reduce((total, p) => total + (p.custo * p.estoque), 0);
             const maisVendido = produtos.reduce((prev, current) => (prev.estoque > current.estoque) ? prev : current);
 
-            document.getElementById('totalProdutos').textContent = totalProdutos;
             document.getElementById('estoqueBaixo').textContent = estoqueBaixo;
             document.getElementById('valorEstoque').textContent = `R$ ${valorEstoque.toFixed(2)}`;
             document.getElementById('maisVendidos').textContent = maisVendido.nome.split(' ')[0];
