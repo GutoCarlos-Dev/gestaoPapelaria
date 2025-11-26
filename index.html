@@ -3,269 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leka Artes - Papelaria Personalizada</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>Login - Leka Artes</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; color: #333; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .login-container { background-color: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); width: 100%; max-width: 400px; }
+        .logo-container { text-align: center; margin-bottom: 20px; }
+        .logo-container img { max-width: 120px; height: auto; border-radius: 50%; }
+        h1 { text-align: center; margin-bottom: 20px; color: #896838; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        input { padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        button { padding: 10px; background-color: #896838; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #6d532d; }
+        .toggle { text-align: center; margin-top: 20px; }
+        .toggle a { color: #F766C4; text-decoration: none; }
+        .error { color: red; font-size: 14px; margin-bottom: 10px; display: none; }
+    </style>
+    <!-- 1. Adicionar a biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-    <!-- Header - Seção de cabeçalho com navegação principal -->
-    <header>
-        <div class="header-content">
-            <a href="index.html" class="logo">Leka Artes</a>
-            <nav>
-                <ul class="nav-menu">
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="pedidos.html">Pedidos</a></li>
-                    <li><a href="financeiro.html">Financeiro</a></li>
-                    <li><a href="clientes.html">Clientes</a></li>
-                    <li><a href="produtos.html">Produtos</a></li>
-                    <li><a href="catalogo.html">Catálogo</a></li>
-                    <li><a href="suporte.html">Suporte</a></li>
-                    <li><a href="login.html">Login</a></li>
-                </ul>
-            </nav>
+    <!-- Container principal do formulário de login -->
+    <div class="login-container" id="loginContainer">
+        <!-- Logo da empresa -->
+        <div class="logo-container">
+            <img src="imagens/logo boneca.jpeg" alt="Logo Leka Artes">
         </div>
-    </header>
 
-    <!-- Hero Section - Seção principal de apresentação do produto -->
-    <section class="hero">
-        <div class="container">
-            <h1>Transforme Sua Papelaria em uma Máquina de Vendas com a Leka Artes!</h1>
-            <p>👉 Simplifique sua rotina.<br>👉 Venda com mais agilidade.<br>👉 Tenha controle total do seu negócio em um só lugar.</p>
-            <!-- Botões de ação para testar, ver planos e acessar o sistema -->
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
-                <a href="login.html" class="btn btn-primary">Testar Gratuitamente</a>
-                <a href="#planos" class="btn btn-secondary">Ver planos</a>
-                <a href="login.html" class="btn btn-success">Acessar Sistema</a>
-            </div>
-        </div>
-    </section>
+        <!-- Título da página de login -->
+        <h1>Entrar no Leka Artes</h1>
 
-    <!-- Teste Section - Seção demonstrativa das funcionalidades de teste -->
-    <section>
-        <div class="container">
-            <h2>TESTE O LEKA ARTES</h2>
-            <p>Veja como é fácil registrar e acompanhar seus pedidos</p>
-            <p>Experimente como é simples para cadastrar seus pedidos e atualizar o status</p>
-            <!-- Lista de funcionalidades disponíveis para teste -->
-            <ul style="max-width: 600px; margin: 2rem auto; text-align: left;">
-                <li>Controle total de Pedidos</li>
-                <li>Destaque de entregas próximas</li>
-                <li>Atualizações no andamento do pedido</li>
-                <li>Possibilidade de Criar Orçamentos, vendas e muito mais..</li>
-                <li>Exportação dos pedidos em Excel ou PDF</li>
-            </ul>
-        </div>
-    </section>
+        <!-- Formulário de login - Permite ao usuário fazer login no sistema -->
+        <form id="loginForm">
+            <!-- Campo para email do usuário -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-    <!-- Dashboard Section - Seção sobre o dashboard interativo -->
-    <section style="background-color: #f8f9fa;">
-        <div class="container">
-            <h2>DASHBOARD INTERATIVO</h2>
-            <p>Visualize suas finanças em um só lugar</p>
-            <p>Experimente como é fácil monitorar suas receitas com análises detalhadas.</p>
-        </div>
-    </section>
+            <!-- Campo para senha do usuário -->
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" required>
 
-    <!-- Recursos Section - Seção apresentando os principais recursos do sistema -->
-    <section>
-        <div class="container">
-            <h2>RECURSOS</h2>
-            <p>Tudo o que você precisa para controlar sua papelaria</p>
-            <p>Conheça as principais funcionalidades que tornam o Leka Artes a melhor escolha para gerenciar sua papelaria personalizada.</p>
-            <div class="features">
-                <!-- Feature: Dashboard Intuitivo - Descrição da funcionalidade de dashboard -->
-                <div class="feature">
-                    <h3>Dashboard Intuitivo</h3>
-                    <p>Visualize seus pedidos em tempo real com gráficos e indicadores que mostram exatamente o andamento da sua papelaria.</p>
-                </div>
-                <!-- Feature: Pedidos - Descrição da gestão de pedidos -->
-                <div class="feature">
-                    <h3>Pedidos</h3>
-                    <p>Cadastre seus pedidos, atualize o andamento, personalize e envie com apenas um clique direto para seu cliente no whatsapp.</p>
-                </div>
-                <!-- Feature: Painel Financeiro - Descrição do controle financeiro -->
-                <div class="feature">
-                    <h3>Painel Financeiro</h3>
-                    <p>Tenha um painel financeiro onde você pode acompanhar todos os pagamentos recebidos e estatísticas dos produtos mais vendidos, clientes que mais compram e muito mais...</p>
-                </div>
-                <!-- Feature: Clientes - Descrição da gestão de clientes -->
-                <div class="feature">
-                    <h3>Clientes</h3>
-                    <p>Cadastre seus clientes, tenha na palma da mão o histórico de cada um de seus clientes, crie estratégias de marketing.</p>
-                </div>
-                <!-- Feature: Produtos - Descrição da gestão de produtos e estoque -->
-                <div class="feature">
-                    <h3>Produtos</h3>
-                    <p>Cadastre seus produtos, cadastre também seu estoque de produtos que se atualiza automaticamente a cada pedido.</p>
-                </div>
-                <!-- Feature: Catálogo Online - Descrição do catálogo para vendas -->
-                <div class="feature">
-                    <h3>Catálogo Online</h3>
-                    <p>Tenha acesso a um catálogo online completo você pode definir quantos produtos vai querer que apareça, seu cliente pode fazer o pedido direto no seu catálogo e você recebe o pedido no seu whatsapp</p>
-                </div>
-            </div>
-        </div>
-    </section>
+            <!-- Mensagem de erro para validação -->
+            <div id="error" class="error">Email ou senha inválidos.</div>
 
-    <!-- Como Funciona Section - Seção explicando o funcionamento do sistema -->
-    <section style="background-color: #f8f9fa;">
-        <div class="container">
-            <h2>COMO FUNCIONA</h2>
-            <p>Simples de usar, poderoso nos resultados</p>
-            <p>Conheça o funcionamento da plataforma e veja como é simples gerenciar sua papelaria.</p>
-            <div class="features">
-                <!-- Feature: Dashboard Completo - Explicação do dashboard -->
-                <div class="feature">
-                    <h3>Dashboard Completo</h3>
-                    <p>Conheça o funcionamento da plataforma e veja como é simples gerenciar sua papelaria.</p>
-                </div>
-                <!-- Feature: Controle de Pedidos - Detalhes da gestão de pedidos -->
-                <div class="feature">
-                    <h3>Controle de Pedidos</h3>
-                    <p>você pode adicionar pedidos, orçamentos e muito mais, controle completo, a nova versão do leka artes trouxe diversas funcionalidades nova.</p>
-                    <!-- Lista de funcionalidades do controle de pedidos -->
-                    <ul>
-                        <li>Cadastro e acompanhamento de pedidos</li>
-                        <li>Personalização do pedido</li>
-                        <li>Envio de orçamento pelo Whatsapp com 1 clique</li>
-                        <li>Calculos automatizados</li>
-                    </ul>
-                </div>
-                <!-- Feature: Painel Financeiro - Detalhes do painel financeiro -->
-                <div class="feature">
-                    <h3>Painel Financeiro</h3>
-                    <p>Agora você consegue acompanhar o desempenho da sua papelaria, você tem a visualização anual ou mensal</p>
-                    <!-- Lista de métricas financeiras -->
-                    <ul>
-                        <li>Pagamentos recebidos</li>
-                        <li>Vendas por mês</li>
-                        <li>Produtos mais vendidos</li>
-                        <li>Clientes que mais compraram</li>
-                    </ul>
-                </div>
-                <!-- Feature: Catálogo Online - Detalhes do catálogo -->
-                <div class="feature">
-                    <h3>Catálogo Online</h3>
-                    <p>Você vai ter um catálogo completo e quando o cliente solicitar o pedido você recebe no seu whatsapp</p>
-                    <!-- Lista de benefícios do catálogo -->
-                    <ul>
-                        <li>Catálogo de pedidos online</li>
-                        <li>Receba os pedidos no seu Whatsapp</li>
-                        <li>Quantidade de produtos ilimitado</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+            <!-- Botão para submeter o formulário de login -->
+            <button type="submit">Entrar</button>
+        </form>
 
-    <!-- Planos Section - Seção de apresentação dos planos de assinatura -->
-    <section id="planos">
-        <div class="container">
-            <h2>PLANOS</h2>
-            <p>Escolha seu plano</p>
-            <p>Escolha apenas a forma de pagamento que melhor se adapta a você.</p>
-            <div class="plans">
-                <!-- Plano Mensal - Opção de pagamento mensal -->
-                <div class="plan">
-                    <h3>Mensal</h3>
-                    <p>R$ 27,00</p>
-                    <p>Pagamento mensal</p>
-                    <p>R$50 de DESCONTO</p>
-                    <!-- Lista de benefícios do plano mensal -->
-                    <ul>
-                        <li>Acesso a todas as funcionalidades</li>
-                        <li>Dashboard personalizado</li>
-                        <li>Catálogo Online</li>
-                        <li>Suporte prioritário</li>
-                        <li>Garantia de 7 dias</li>
-                    </ul>
-                    <a href="login.html" class="btn btn-primary">Começar Agora</a>
-                </div>
-                <!-- Plano Anual - Opção de pagamento anual com desconto -->
-                <div class="plan">
-                    <h3>Anual</h3>
-                    <p>R$ 197,00</p>
-                    <p>Pagamento anual</p>
-                    <p>+R$250 de DESCONTO</p>
-                    <!-- Lista de benefícios do plano anual -->
-                    <ul>
-                        <li>Acesso a todas as funcionalidades</li>
-                        <li>Dashboard personalizado</li>
-                        <li>Catálogo Online</li>
-                        <li>Suporte prioritário</li>
-                        <li>Garantia de 7 dias</li>
-                    </ul>
-                    <a href="login.html" class="btn btn-success">Começar Agora</a>
-                </div>
-            </div>
-            <p style="text-align: center; margin-top: 2rem;">Garantia incondicional de 7 dias</p>
-            <p style="text-align: center;">Se não estiver satisfeito por qualquer motivo, devolvemos 100% do seu dinheiro.</p>
+        <!-- Link para alternar para o formulário de cadastro -->
+        <div class="toggle">
+            <p>Não tem conta? <a href="#" id="toggleLink">Cadastrar-se</a></p>
         </div>
-    </section>
+    </div>
 
-    <!-- Depoimentos Section - Seção de depoimentos de usuários -->
-    <section class="testimonials">
-        <div class="container">
-            <h2>DEPOIMENTOS</h2>
-            <p>O que nossos usuários dizem</p>
-            <p>Milhares de pessoas já estão organizando melhor suas papelarias com o Leka Artes.</p>
-            <!-- Depoimento de usuário satisfeito -->
-            <div class="testimonial">
-                <p>"Finalmente encontrei um sistema que atende minha gráfica rápida, a demanda aqui é muito alta e com o Leka Artes consigo organizar tudo e acompanhar meus pedidos para não esquecer de algum cliente."</p>
-                <p>- Fábio</p>
-            </div>
-        </div>
-    </section>
+    <!-- Formulário de cadastro (inicialmente oculto) -->
+    <div class="login-container" id="registerContainer" style="display: none;">
+        <!-- Título da página de cadastro -->
+        <h1>Cadastrar no Leka Artes</h1>
 
-    <!-- Fale Conosco Section - Seção de contato e suporte -->
-    <section style="background-color: #f8f9fa;">
-        <div class="container">
-            <h2>Fale conosco agora mesmo</h2>
-            <p>Nossa equipe está pronta para atender você e esclarecer todas as suas dúvidas sobre o Leka Artes.</p>
-            <!-- Botão para contato via WhatsApp -->
-            <a href="suporte.html" class="btn btn-whatsapp">Conversar no WhatsApp</a>
-            <p>A maneira mais simples e eficaz de gerenciar sua Papelaria Personalizada.</p>
-        </div>
-    </section>
+        <!-- Formulário de cadastro - Permite ao usuário criar uma nova conta -->
+        <form id="registerForm">
+            <!-- Campo para nome do usuário -->
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
 
-    <!-- Footer - Rodapé do site com links e informações -->
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Leka Artes</h3>
-                <p>Soluções completas para sua papelaria personalizada.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Links Úteis</h3>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="dashboard.html">Dashboard</a></li>
-                    <li><a href="pedidos.html">Pedidos</a></li>
-                    <li><a href="suporte.html">Suporte</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contato</h3>
-                <ul>
-                    <li>Email: contato@lekaartes.com.br</li>
-                    <li>Tel: (11) 99999-9999</li>
-                    <li><a href="suporte.html">Central de Suporte</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Redes Sociais</h3>
-                <ul>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Instagram</a></li>
-                </ul>
-            </div>
+            <!-- Campo para email do usuário -->
+            <label for="regEmail">Email:</label>
+            <input type="email" id="regEmail" name="email" required>
+
+            <!-- Campo para senha do usuário -->
+            <label for="regPassword">Senha:</label>
+            <input type="password" id="regPassword" name="password" required>
+
+            <!-- Campo para confirmar senha -->
+            <label for="confirmPassword">Confirmar Senha:</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+
+            <!-- Mensagem de erro para validação -->
+            <div id="regError" class="error">Por favor, preencha todos os campos corretamente.</div>
+
+            <!-- Botão para submeter o formulário de cadastro -->
+            <button type="submit">Cadastrar</button>
+        </form>
+
+        <!-- Link para alternar de volta para o formulário de login -->
+        <div class="toggle">
+            <p>Já tem conta? <a href="#" id="toggleBackLink">Fazer Login</a></p>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Leka Artes. Todos os direitos reservados.</p>
-        </div>
-    </footer>
+    </div>
+
+    <script>
+        // 2. Inicializar o cliente do Supabase
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co'; // Substitua pela URL do seu projeto
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY'; // Substitua pela sua chave anon public
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
+        // Função para alternar entre formulários de login e cadastro
+        // Esta função mostra/oculta os containers apropriados quando o usuário clica nos links
+        const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
+
+        function toggleForms() {
+            loginContainer.style.display = loginContainer.style.display === 'none' ? 'block' : 'none';
+            registerContainer.style.display = registerContainer.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Adiciona event listeners aos links de alternância
+        // Permite ao usuário alternar entre login e cadastro sem recarregar a página
+        document.getElementById('toggleLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleForms();
+        });
+
+        document.getElementById('toggleBackLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            toggleForms();
+        });
+
+        // Validação básica do formulário de login
+        // Verifica se os campos estão preenchidos e simula uma validação de credenciais
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none'; // Esconde erros anteriores
+
+            // 3. Usar Supabase para fazer login
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = 'Email ou senha inválidos.';
+                errorDiv.style.display = 'block';
+                console.error('Erro no login:', error.message);
+            } else {
+                alert('Login realizado com sucesso! Redirecionando para o dashboard...');
+                window.location.href = 'dashboard.html'; // Redireciona para o dashboard
+            }
+        });
+
+        // Validação básica do formulário de cadastro
+        // Verifica se todos os campos estão preenchidos e se as senhas coincidem
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorDiv = document.getElementById('regError');
+            errorDiv.style.display = 'none'; // Esconde erros anteriores
+
+            if (!name || !email || !password || !confirmPassword) {
+                errorDiv.textContent = 'Por favor, preencha todos os campos.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'As senhas não coincidem.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 4. Usar Supabase para cadastrar um novo usuário
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                console.error('Erro no cadastro:', error.message);
+            } else {
+                alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                toggleForms(); // Volta para o formulário de login
+            }
+        });
+    </script>
 
 </body>
 </html>
