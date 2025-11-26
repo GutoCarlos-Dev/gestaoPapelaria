@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Adicionar a biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Reset e Configurações Globais */
         :root {
@@ -71,8 +73,8 @@
                 <a href="produtos.html">Produtos</a>
             </nav>
             <span class="avatar">👤</span>
-            <span>Admin</span>
-            <a href="login.html" title="Sair">Sair</a>
+            <span id="userEmail" style="font-weight: 600;"></span>
+            <a href="#" id="logoutButton" title="Sair" style="font-weight: 600; color: var(--text-light);">Sair</a>
         </div>
     </header>
 
@@ -81,7 +83,7 @@
 
         <!-- Seção de boas-vindas - Saudação personalizada para o usuário -->
         <div class="welcome">
-            <h2>Bem-vindo de volta, Admin!</h2>
+            <h2 id="welcomeMessage">Bem-vindo de volta!</h2>
             <p>Aqui você tem uma visão geral completa do seu negócio em tempo real.</p>
         </div>
 
@@ -92,7 +94,7 @@
                 <div class="stat-icon">📦</div>
                 <div class="stat-info">
                     <h3>Total de Pedidos</h3>
-                    <div class="stat-number" id="totalPedidos">247</div>
+                    <div class="stat-number" id="totalPedidos">0</div>
                 </div>
             </div>
             <!-- Card: Receita Total - Exibe o valor total de vendas -->
@@ -100,7 +102,7 @@
                 <div class="stat-icon">💰</div>
                 <div class="stat-info">
                     <h3>Receita Total</h3>
-                    <div class="stat-number" id="receitaTotal">R$ 12.450</div>
+                    <div class="stat-number" id="receitaTotal">R$ 0,00</div>
                 </div>
             </div>
             <!-- Card: Clientes Ativos - Número de clientes únicos -->
@@ -108,7 +110,7 @@
                 <div class="stat-icon">👥</div>
                 <div class="stat-info">
                     <h3>Clientes Ativos</h3>
-                    <div class="stat-number" id="clientesAtivos">89</div>
+                    <div class="stat-number" id="clientesAtivos">0</div>
                 </div>
             </div>
             <!-- Card: Produtos em Estoque - Quantidade total de produtos disponíveis -->
@@ -116,7 +118,7 @@
                 <div class="stat-icon">🏷️</div>
                 <div class="stat-info">
                     <h3>Produtos em Estoque</h3>
-                    <div class="stat-number" id="produtosEstoque">1.234</div>
+                    <div class="stat-number" id="produtosEstoque">0</div>
                 </div>
             </div>
         </div>
@@ -166,46 +168,114 @@
         <!-- Seção adicional: Atividades Recentes - Lista das últimas ações no sistema -->
         <div class="chart recent-activities" style="margin-top: 20px;">
             <h3>Atividades Recentes</h3>
-            <ul>
-                <li>Novo pedido #1234 cadastrado - Cartões de Visita (há 2 horas)</li>
-                <li>Cliente João Silva fez uma compra - R$ 150,00 (há 4 horas)</li>
-                <li>Estoque de Papel A4 atualizado - 500 unidades adicionadas (há 6 horas)</li>
-                <li>Orçamento enviado para cliente Maria Santos (há 1 dia)</li>
-                <li>Pagamento recebido - Pedido #1220 (há 1 dia)</li>
+            <ul id="listaAtividades">
+                <li>Carregando atividades...</li>
             </ul>
         </div>
 
     </div>
 
     <script>
-        // Função para atualizar estatísticas em tempo real (simulado)
-        // Esta função simula a atualização dinâmica dos indicadores do dashboard
-        function atualizarEstatisticas() {
-            // Simulação de atualização de dados - em um sistema real, isso viria de uma API
-            const totalPedidos = document.getElementById('totalPedidos');
-            const receitaTotal = document.getElementById('receitaTotal');
-            const clientesAtivos = document.getElementById('clientesAtivos');
-            const produtosEstoque = document.getElementById('produtosEstoque');
+        // 1. Inicializar o cliente do Supabase
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY';
 
-            // Pequenas variações para simular dados em tempo real
-            totalPedidos.textContent = Math.floor(Math.random() * 10) + 240;
-            receitaTotal.textContent = 'R$ ' + (Math.floor(Math.random() * 500) + 12000).toLocaleString('pt-BR');
-            clientesAtivos.textContent = Math.floor(Math.random() * 5) + 85;
-            produtosEstoque.textContent = Math.floor(Math.random() * 50) + 1200;
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 2. Script de Proteção da Página
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                // Se não houver sessão, redireciona para a página de login
+                window.location.href = 'login.html';
+            } else {
+                // Se houver sessão, o usuário está logado.
+                // Personaliza a página com os dados do usuário.
+                console.log('Usuário logado:', session.user.email);
+                document.getElementById('welcomeMessage').textContent = `Bem-vindo de volta, ${session.user.email}!`;
+                document.getElementById('userEmail').textContent = session.user.email;
+                // Carrega os dados do dashboard
+                carregarDadosDashboard();
+            }
+        });
+
+        // 3. Funcionalidade de Logout
+        document.getElementById('logoutButton').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                console.error('Erro ao fazer logout:', error.message);
+            } else {
+                // Redireciona para a página de login após o logout
+                alert('Você foi desconectado.');
+                window.location.href = 'login.html';
+            }
+        });
+
+        // 4. Função para carregar dados reais do Supabase
+        async function carregarDadosDashboard() {
+            // Formatar moeda
+            const formatarMoeda = (valor) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
+
+            // Buscar total de pedidos
+            const { count: totalPedidos, error: pedidosError } = await supabaseClient
+                .from('pedidos')
+                .select('*', { count: 'exact', head: true });
+            if (!pedidosError) {
+                document.getElementById('totalPedidos').textContent = totalPedidos;
+            }
+
+            // Buscar receita total
+            const { data: pedidosData, error: receitaError } = await supabaseClient
+                .from('pedidos')
+                .select('valor_total');
+            if (!receitaError) {
+                const receitaTotal = pedidosData.reduce((acc, pedido) => acc + (pedido.valor_total || 0), 0);
+                document.getElementById('receitaTotal').textContent = formatarMoeda(receitaTotal);
+            }
+
+            // Buscar clientes ativos
+            const { count: clientesAtivos, error: clientesError } = await supabaseClient
+                .from('clientes')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'ativo');
+            if (!clientesError) {
+                document.getElementById('clientesAtivos').textContent = clientesAtivos;
+            }
+
+            // Buscar total em estoque
+            const { data: produtosData, error: estoqueError } = await supabaseClient
+                .from('produtos')
+                .select('estoque');
+            if (!estoqueError) {
+                const totalEstoque = produtosData.reduce((acc, produto) => acc + (produto.estoque || 0), 0);
+                document.getElementById('produtosEstoque').textContent = totalEstoque;
+            }
+
+            // Buscar atividades recentes (últimos 5 pedidos)
+            const { data: atividades, error: atividadesError } = await supabaseClient
+                .from('pedidos')
+                .select('id, produto_descricao, valor_total, created_at')
+                .order('created_at', { ascending: false })
+                .limit(5);
+            
+            if (!atividadesError && atividades.length > 0) {
+                const listaAtividades = document.getElementById('listaAtividades');
+                listaAtividades.innerHTML = ''; // Limpa a lista
+                atividades.forEach(atividade => {
+                    const item = document.createElement('li');
+                    const data = new Date(atividade.created_at).toLocaleDateString('pt-BR');
+                    item.textContent = `Novo pedido #${atividade.id}: ${atividade.produto_descricao} - ${formatarMoeda(atividade.valor_total)} (em ${data})`;
+                    listaAtividades.appendChild(item);
+                });
+            } else {
+                document.getElementById('listaAtividades').innerHTML = '<li>Nenhuma atividade recente.</li>';
+            }
         }
-
-        // Atualiza as estatísticas a cada 30 segundos para simular dados em tempo real
-        setInterval(atualizarEstatisticas, 30000);
-
-        // Função para inicializar o dashboard
-        // Carrega dados iniciais e configura event listeners se necessário
-        function inicializarDashboard() {
-            console.log('Dashboard inicializado com sucesso');
-            // Aqui poderiam ser feitas chamadas para APIs para carregar dados reais
-        }
-
-        // Chama a função de inicialização quando a página carrega
-        window.addEventListener('load', inicializarDashboard);
     </script>
 
 </body>

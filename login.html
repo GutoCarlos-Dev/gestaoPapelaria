@@ -19,6 +19,8 @@
         .toggle a { color: #F766C4; text-decoration: none; }
         .error { color: red; font-size: 14px; margin-bottom: 10px; display: none; }
     </style>
+    <!-- 1. Adicionar a biblioteca do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -92,6 +94,14 @@
     </div>
 
     <script>
+        // 2. Inicializar o cliente do Supabase
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co'; // Substitua pela URL do seu projeto
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY'; // Substitua pela sua chave anon public
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+
         // Função para alternar entre formulários de login e cadastro
         // Esta função mostra/oculta os containers apropriados quando o usuário clica nos links
         const loginContainer = document.getElementById('loginContainer');
@@ -116,47 +126,65 @@
 
         // Validação básica do formulário de login
         // Verifica se os campos estão preenchidos e simula uma validação de credenciais
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const errorDiv = document.getElementById('error');
+            errorDiv.style.display = 'none'; // Esconde erros anteriores
 
-            if (email && password) {
-                // Simulação de validação para um único usuário.
-                // ATENÇÃO: Esta validação é feita no navegador e não é segura para produção.
-                if (email === 'admin@lekaartes.com' && password === '123456') {
-                    alert('Login realizado com sucesso! Redirecionando para o dashboard...');
-                    window.location.href = 'dashboard.html'; // Redireciona para o dashboard
-                } else {
-                    errorDiv.style.display = 'block';
-                }
-            } else {
+            // 3. Usar Supabase para fazer login
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = 'Email ou senha inválidos.';
                 errorDiv.style.display = 'block';
+                console.error('Erro no login:', error.message);
+            } else {
+                alert('Login realizado com sucesso! Redirecionando para o dashboard...');
+                window.location.href = 'dashboard.html'; // Redireciona para o dashboard
             }
         });
 
         // Validação básica do formulário de cadastro
         // Verifica se todos os campos estão preenchidos e se as senhas coincidem
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const name = document.getElementById('name').value;
             const email = document.getElementById('regEmail').value;
             const password = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const errorDiv = document.getElementById('regError');
+            errorDiv.style.display = 'none'; // Esconde erros anteriores
 
-            if (name && email && password && confirmPassword) {
-                if (password === confirmPassword) {
-                    // Simulação de cadastro - em um sistema real, isso seria enviado para o servidor
-                    alert('Cadastro realizado com sucesso! Faça login para continuar.');
-                    toggleForms(); // Volta para o formulário de login
-                } else {
-                    errorDiv.textContent = 'As senhas não coincidem.';
-                    errorDiv.style.display = 'block';
-                }
-            } else {
+            if (!name || !email || !password || !confirmPassword) {
+                errorDiv.textContent = 'Por favor, preencha todos os campos.';
                 errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                errorDiv.textContent = 'As senhas não coincidem.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // 4. Usar Supabase para cadastrar um novo usuário
+            const { data, error } = await supabaseClient.auth.signUp({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.style.display = 'block';
+                console.error('Erro no cadastro:', error.message);
+            } else {
+                alert('Cadastro realizado com sucesso! Faça login para continuar.');
+                toggleForms(); // Volta para o formulário de login
             }
         });
     </script>
