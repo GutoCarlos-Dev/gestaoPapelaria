@@ -366,7 +366,7 @@
                 document.getElementById('preco').value = produto.preco;
                 document.getElementById('custo').value = produto.custo;
                 document.getElementById('estoque').value = produto.estoque;
-                document.getElementById('estoqueMinimo').value = produto.estoqueMinimo;
+                document.getElementById('estoqueMinimo').value = produto.estoque_minimo; // Corrigido para bater com o banco
                 document.getElementById('descricao').value = produto.descricao;
                 document.getElementById('statusProduto').value = produto.status;
                 abrirModal('editarProduto');
@@ -526,45 +526,88 @@
         document.getElementById('formProduto').addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            // Validação adicional
+            const preco = parseFloat(document.getElementById('preco').value);
+            const custo = parseFloat(document.getElementById('custo').value);
+            const estoque = parseInt(document.getElementById('estoque').value);
+            const estoqueMinimo = parseInt(document.getElementById('estoqueMinimo').value);
+
+            // Verificar se preço é maior que custo
+            if (preco <= custo) {
+                alert('O preço de venda deve ser maior que o custo do produto.');
+                document.getElementById('preco').focus();
+                return;
+            }
+
+            // Verificar se estoque mínimo não é maior que estoque atual
+            if (estoqueMinimo > estoque) {
+                alert('O estoque mínimo não pode ser maior que o estoque atual.');
+                document.getElementById('estoqueMinimo').focus();
+                return;
+            }
+
+            // Verificar se nome não está vazio
+            const nome = document.getElementById('nome').value.trim();
+            if (!nome) {
+                alert('O nome do produto é obrigatório.');
+                document.getElementById('nome').focus();
+                return;
+            }
+
             const id = document.getElementById('produtoId').value;
-            
+
+            // Mostrar feedback de carregamento
+            const submitButton = document.querySelector('#formProduto button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Salvando...';
+            submitButton.disabled = true;
+
             // Coleta os dados do formulário em um objeto
             const dadosProduto = {
-                nome: document.getElementById('nome').value,
+                nome: nome,
                 categoria: document.getElementById('categoria').value,
-                preco: parseFloat(document.getElementById('preco').value),
-                custo: parseFloat(document.getElementById('custo').value),
-                estoque: parseInt(document.getElementById('estoque').value),
-                estoque_minimo: parseInt(document.getElementById('estoqueMinimo').value), // Corrigido para o nome da coluna no DB
-                descricao: document.getElementById('descricao').value,
+                preco: preco,
+                custo: custo,
+                estoque: estoque,
+                estoque_minimo: estoqueMinimo, // Corrigido para o nome da coluna no DB
+                descricao: document.getElementById('descricao').value.trim(),
                 status: document.getElementById('statusProduto').value
             };
 
             let error;
 
-            if (id) {
-                // Lógica para ATUALIZAR um produto existente
-                const { error: updateError } = await supabaseClient
-                    .from('produtos')
-                    .update(dadosProduto)
-                    .eq('id', id);
-                error = updateError;
-            } else {
-                // Lógica para INSERIR um novo produto
-                const { error: insertError } = await supabaseClient
-                    .from('produtos')
-                    .insert([dadosProduto]);
-                error = insertError;
-            }
+            try {
+                if (id) {
+                    // Lógica para ATUALIZAR um produto existente
+                    const { error: updateError } = await supabaseClient
+                        .from('produtos')
+                        .update(dadosProduto)
+                        .eq('id', id);
+                    error = updateError;
+                } else {
+                    // Lógica para INSERIR um novo produto
+                    const { error: insertError } = await supabaseClient
+                        .from('produtos')
+                        .insert([dadosProduto]);
+                    error = insertError;
+                }
 
-            if (error) {
-                console.error('Erro ao salvar produto:', error.message);
-                alert('Não foi possível salvar o produto. Verifique o console para mais detalhes.');
-            } else {
-                alert('Produto salvo com sucesso!');
-                fecharModal();
-                // Recarrega a lista de produtos do banco para exibir a alteração
-                carregarProdutos();
+                if (error) {
+                    console.error('Erro ao salvar produto:', error.message);
+                    alert('Não foi possível salvar o produto. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Produto salvo com sucesso!');
+                    fecharModal();
+                    // Recarrega a lista de produtos do banco para exibir a alteração
+                    carregarProdutos();
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                alert('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
             }
         });
     </script>
