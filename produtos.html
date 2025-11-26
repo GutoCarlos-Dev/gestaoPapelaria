@@ -459,14 +459,15 @@
             alertas.innerHTML = '';
 
             produtos.forEach(produto => {
-                const status = produto.estoque <= produto.estoqueMinimo ? 'Crítico' : 'Normal';
-                const statusClass = produto.estoque <= produto.estoqueMinimo ? 'stock-low' : 'stock-normal';
+                const estoqueMinimo = produto.estoque_minimo || 0; // Usar o campo correto do banco
+                const status = produto.estoque <= estoqueMinimo ? 'Crítico' : 'Normal';
+                const statusClass = produto.estoque <= estoqueMinimo ? 'stock-low' : 'stock-normal';
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${produto.nome}</td>
                     <td>${produto.estoque}</td>
-                    <td>${produto.estoqueMinimo}</td>
+                    <td>${estoqueMinimo}</td>
                     <td><span class="${statusClass}">${status}</span></td>
                     <td>
                         <button onclick="ajustarEstoque(${produto.id}, 'adicionar')">Repor</button>
@@ -476,7 +477,7 @@
                 tbody.appendChild(row);
 
                 // Adicionar alerta se estoque baixo
-                if (produto.estoque <= produto.estoqueMinimo) {
+                if (produto.estoque <= estoqueMinimo) {
                     const alerta = document.createElement('div');
                     alerta.className = 'alert alert-warning';
                     alerta.innerHTML = `<strong>Alerta:</strong> ${produto.nome} está com estoque baixo (${produto.estoque} unidades). Considere repor!`;
