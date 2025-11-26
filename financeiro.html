@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financeiro - Leka Artes</title>
     <style>
@@ -34,7 +36,11 @@
         th { background-color: #f8f9fa; font-weight: bold; }
         .positive { color: #28a745; }
         .negative { color: #dc3545; }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile span { font-weight: 600; }
+        .user-profile .avatar { font-size: 24px; }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -42,17 +48,17 @@
     <header>
         <h1>Leka Artes - Painel Financeiro</h1>
         <nav>
-            <!-- Menu de navegação para acessar diferentes módulos do sistema -->
-            <a href="index.html">Home</a>
             <a href="dashboard.html">Dashboard</a>
             <a href="pedidos.html">Pedidos</a>
-            <a href="financeiro.html">Financeiro</a>
+            <a href="financeiro.html" class="active">Financeiro</a>
             <a href="clientes.html">Clientes</a>
             <a href="produtos.html">Produtos</a>
-            <a href="catalogo.html">Catálogo</a>
-            <a href="suporte.html">Suporte</a>
-            <a href="login.html">Sair</a>
         </nav>
+        <div class="user-profile">
+            <span class="avatar">👤</span>
+            <span id="userEmail" style="font-weight: 600;"></span>
+            <a href="#" id="logoutButton" title="Sair" style="font-weight: 600; color: #C5AA7F;">Sair</a>
+        </div>
     </header>
 
     <!-- Container principal da página financeira -->
@@ -354,6 +360,37 @@
 
         // Inicializar página com dados mensais
         window.addEventListener('load', atualizarDados);
+    </script>
+    <script>
+        // Script de Proteção e Logout
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('userEmail').textContent = session.user.email;
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                console.error('Erro ao fazer logout:', error.message);
+            } else {
+                alert('Você foi desconectado.');
+                window.location.href = 'index.html';
+            }
+        });
     </script>
 
 </body>
