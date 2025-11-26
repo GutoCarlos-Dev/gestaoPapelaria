@@ -115,56 +115,12 @@
                         <th>Email</th>
                         <th>Telefone</th>
                         <th>Status</th>
-                        <th>Última Compra</th>
-                        <th>Total Gasto</th>
+                        <th>Data de Nascimento</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- Linhas de exemplo de clientes - em sistema real viriam do banco de dados -->
-                    <tr>
-                        <td>001</td>
-                        <td>João Silva</td>
-                        <td>joao@email.com</td>
-                        <td>(11) 99999-9999</td>
-                        <td><span class="status ativo">Ativo</span></td>
-                        <td>2024-01-15</td>
-                        <td>R$ 4.250,00</td>
-                        <td>
-                            <!-- Botões de ação para cada cliente -->
-                            <button onclick="verHistorico(1)">Histórico</button>
-                            <button onclick="editarCliente(1)">Editar</button>
-                            <button class="btn-danger" onclick="excluirCliente(1)">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Maria Santos</td>
-                        <td>maria@email.com</td>
-                        <td>(11) 88888-8888</td>
-                        <td><span class="status ativo">Ativo</span></td>
-                        <td>2024-01-14</td>
-                        <td>R$ 3.800,00</td>
-                        <td>
-                            <button onclick="verHistorico(2)">Histórico</button>
-                            <button onclick="editarCliente(2)">Editar</button>
-                            <button class="btn-danger" onclick="excluirCliente(2)">Excluir</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>003</td>
-                        <td>Carlos Oliveira</td>
-                        <td>carlos@email.com</td>
-                        <td>(11) 77777-7777</td>
-                        <td><span class="status inativo">Inativo</span></td>
-                        <td>2023-12-10</td>
-                        <td>R$ 2.900,00</td>
-                        <td>
-                            <button onclick="verHistorico(3)">Histórico</button>
-                            <button onclick="editarCliente(3)">Editar</button>
-                            <button class="btn-danger" onclick="excluirCliente(3)">Excluir</button>
-                        </td>
-                    </tr>
+                    <!-- Dados serão carregados dinamicamente do banco de dados -->
                 </tbody>
             </table>
 
@@ -418,6 +374,7 @@
             tbody.innerHTML = '';
 
             clientes.forEach(cliente => {
+                const dataNascimento = cliente.data_nascimento ? new Date(cliente.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado';
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${cliente.id.toString().padStart(3, '0')}</td>
@@ -425,8 +382,7 @@
                     <td>${cliente.email}</td>
                     <td>${cliente.telefone}</td>
                     <td><span class="status ${cliente.status}">${cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1)}</span></td>
-                    <td>${cliente.ultimaCompra}</td>
-                    <td>R$ ${cliente.totalGasto.toFixed(2)}</td>
+                    <td>${dataNascimento}</td>
                     <td>
                         <button onclick="verHistorico(${cliente.id})">Histórico</button>
                         <button onclick="editarCliente(${cliente.id})">Editar</button>
