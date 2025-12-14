@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos - Leka Artes</title>
+    <style>
+        /* Reset e Configurações Globais */
+        :root {
+            --primary-color: #896838; /* Marrom/Dourado Escuro */
+            --secondary-color: #C5AA7F; /* Bege Médio */
+            --accent-color: #F766C4; /* Rosa Vibrante */
+            --light-accent-color: #FBD2D1; /* Rosa Claro */
+            --background-color: #fff; /* Fundo principal branco para clareza */
+            --card-background: #ffffff;
+            --text-color: #896838;
+            --text-light: #C5AA7F;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--background-color); color: var(--text-color); }
+
+        /* Header */
+        header { background-color: var(--card-background); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        header h1 { font-size: 1.5em; color: var(--primary-color); margin: 0; display: flex; align-items: center; gap: 10px; }
+        header h1 img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        nav { display: flex; align-items: center; gap: 25px; }
+        nav a { text-decoration: none; color: var(--text-light); font-weight: 600; font-size: 0.9em; transition: color 0.2s; }
+        nav a:hover, nav a.active { color: var(--primary-color); }
+        .container { padding: 20px; }
+        .actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { padding: 10px 15px; background-color: #896838; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #6d532d; }
+        .btn-secondary { background-color: #C5AA7F; }
+        .btn-secondary:hover { background-color: #b3986f; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        table { width: 100%; border-collapse: collapse; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+        }
+        .status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.8);
+        }
+        .status.pendente {
+            background: linear-gradient(135deg, #FFF3CD, #FFEAA7);
+            color: #856404;
+            border-color: #FFEAA7;
+        }
+        .status.andamento {
+            background: linear-gradient(135deg, #D1ECF1, #A3D9E6);
+            color: #0C5460;
+            border-color: #A3D9E6;
+        }
+        .status.concluido {
+            background: linear-gradient(135deg, #D4EDDA, #A8DADC);
+            color: #155724;
+            border-color: #A8DADC;
+        }
+        .status.cancelado {
+            background: linear-gradient(135deg, #F8D7DA, #F5C6CB);
+            color: #721C24;
+            border-color: #F5C6CB;
+        }
+        .status:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: all 0.2s ease;
+        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 500px; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Poppins', sans-serif; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row > * { flex: 1; }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile span { font-weight: 600; }
+        .user-profile .avatar { font-size: 24px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1><img src="imagens/logo letras.jpeg" alt="Leka Artes Logo" title="Leka Artes"> Controle de Pedidos</h1>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html" class="active">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html">Produtos</a>
+        </nav>
+        <div class="user-profile">
+            <span class="avatar">👤</span>
+            <span id="userEmail" style="font-weight: 600;"></span>
+            <a href="#" id="logoutButton" title="Sair" style="font-weight: 600; color: #C5AA7F;">Sair</a>
+        </div>
+    </header>
+
+    <!-- Container principal da página de pedidos -->
+    <div class="container">
+
+        <!-- Seção de ações - Botões para gerenciar pedidos -->
+        <div class="actions">
+            <!-- Botão para adicionar novo pedido -->
+            <button onclick="abrirModal('novoPedido')">Novo Pedido</button>
+            <!-- Botão para exportar pedidos em Excel -->
+            <button class="btn-secondary" onclick="exportarExcel()">Exportar Excel</button>
+            <!-- Botão para exportar pedidos em PDF -->
+            <button class="btn-secondary" onclick="exportarPDF()">Exportar PDF</button>
+        </div>
+
+        <!-- Tabela de pedidos - Lista todos os pedidos cadastrados -->
+        <table id="tabelaPedidos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Linhas de exemplo de pedidos - em um sistema real, esses dados viriam do banco de dados -->
+                <tr>
+                    <td>001</td>
+                    <td>João Silva</td>
+                    <td>Cartões de Visita</td>
+                    <td>500</td>
+                    <td>R$ 150,00</td>
+                    <td><span class="status concluido">Concluído</span></td>
+                    <td>2024-01-15</td>
+                    <td>
+                        <!-- Botões de ação para cada pedido -->
+                        <button onclick="editarPedido(1)">Editar</button>
+                        <button class="btn-danger" onclick="excluirPedido(1)">Excluir</button>
+                        <button class="btn-secondary" onclick="enviarWhatsApp(1)">WhatsApp</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>002</td>
+                    <td>Maria Santos</td>
+                    <td>Banners</td>
+                    <td>2</td>
+                    <td>R$ 300,00</td>
+                    <td><span class="status andamento">Em Andamento</span></td>
+                    <td>2024-01-16</td>
+                    <td>
+                        <button onclick="editarPedido(2)">Editar</button>
+                        <button class="btn-danger" onclick="excluirPedido(2)">Excluir</button>
+                        <button class="btn-secondary" onclick="enviarWhatsApp(2)">WhatsApp</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>003</td>
+                    <td>Carlos Oliveira</td>
+                    <td>Folhetos</td>
+                    <td>1000</td>
+                    <td>R$ 200,00</td>
+                    <td><span class="status pendente">Pendente</span></td>
+                    <td>2024-01-17</td>
+                    <td>
+                        <button onclick="editarPedido(3)">Editar</button>
+                        <button class="btn-danger" onclick="excluirPedido(3)">Excluir</button>
+                        <button class="btn-secondary" onclick="enviarWhatsApp(3)">WhatsApp</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- Modal para novo pedido - Formulário popup para cadastrar/editar pedidos -->
+    <div id="modalPedido" class="modal">
+        <div class="modal-content">
+            <!-- Título do modal - muda dinamicamente entre "Novo Pedido" e "Editar Pedido" -->
+            <h2 id="modalTitle">Novo Pedido</h2>
+
+            <!-- Formulário de pedido - Campos para inserir dados do pedido -->
+            <form id="formPedido">
+                <!-- Campo oculto para ID do pedido (usado na edição) -->
+                <input type="hidden" id="pedidoId">
+
+                <!-- Linha de campos: Cliente e Produto -->
+                <div class="form-row">
+                    <!-- Campo para selecionar cliente -->
+                    <div>
+                        <label for="cliente">Cliente:</label>
+                        <select id="cliente" required>
+                            <option value="">Selecione um cliente</option>
+                            <option value="1">João Silva</option>
+                            <option value="2">Maria Santos</option>
+                            <option value="3">Carlos Oliveira</option>
+                        </select>
+                    </div>
+                    <!-- Campo para selecionar produto -->
+                    <div>
+                        <label for="produto">Produto:</label>
+                        <select id="produto" required>
+                            <option value="">Selecione um produto</option>
+                            <option value="1">Cartões de Visita</option>
+                            <option value="2">Banners</option>
+                            <option value="3">Folhetos</option>
+                            <option value="4">Panfletos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Linha de campos: Quantidade e Valor -->
+                <div class="form-row">
+                    <!-- Campo para quantidade do produto -->
+                    <div>
+                        <label for="quantidade">Quantidade:</label>
+                        <input type="number" id="quantidade" min="1" required>
+                    </div>
+                    <!-- Campo para valor do pedido -->
+                    <div>
+                        <label for="valor">Valor (R$):</label>
+                        <input type="number" id="valor" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <!-- Campo para status do pedido -->
+                <label for="status">Status:</label>
+                <select id="status" required>
+                    <option value="pendente">Pendente</option>
+                    <option value="andamento">Em Andamento</option>
+                    <option value="concluido">Concluído</option>
+                    <option value="cancelado">Cancelado</option>
+                </select>
+
+                <!-- Campo para observações adicionais -->
+                <label for="observacoes">Observações:</label>
+                <textarea id="observacoes" rows="3"></textarea>
+
+                <!-- Botões do formulário -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <!-- Botão para cancelar e fechar o modal -->
+                    <button type="button" onclick="fecharModal()">Cancelar</button>
+                    <!-- Botão para salvar o pedido -->
+                    <button type="submit">Salvar Pedido</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variável global para armazenar pedidos (simulação de banco de dados)
+        // Em um sistema real, esses dados viriam de uma API ou banco de dados
+        let pedidos = [
+            { id: 1, cliente: 'João Silva', produto: 'Cartões de Visita', quantidade: 500, valor: 150.00, status: 'concluido', data: '2024-01-15', observacoes: '' },
+            { id: 2, cliente: 'Maria Santos', produto: 'Banners', quantidade: 2, valor: 300.00, status: 'andamento', data: '2024-01-16', observacoes: '' },
+            { id: 3, cliente: 'Carlos Oliveira', produto: 'Folhetos', quantidade: 1000, valor: 200.00, status: 'pendente', data: '2024-01-17', observacoes: '' }
+        ];
+
+        // Função para abrir modal de novo pedido
+        // Limpa o formulário e define o título apropriado
+        function abrirModal(tipo) {
+            document.getElementById('modalPedido').style.display = 'block';
+            document.getElementById('modalTitle').textContent = tipo === 'novoPedido' ? 'Novo Pedido' : 'Editar Pedido';
+            if (tipo === 'novoPedido') {
+                limparFormulario();
+            }
+        }
+
+        // Função para fechar modal
+        // Oculta o modal e limpa o formulário
+        function fecharModal() {
+            document.getElementById('modalPedido').style.display = 'none';
+            limparFormulario();
+        }
+
+        // Função para limpar formulário
+        // Reseta todos os campos do formulário para valores vazios
+        function limparFormulario() {
+            document.getElementById('pedidoId').value = '';
+            document.getElementById('cliente').value = '';
+            document.getElementById('produto').value = '';
+            document.getElementById('quantidade').value = '';
+            document.getElementById('valor').value = '';
+            document.getElementById('status').value = 'pendente';
+            document.getElementById('observacoes').value = '';
+        }
+
+        // Função para editar pedido
+        // Carrega os dados do pedido no formulário para edição
+        function editarPedido(id) {
+            const pedido = pedidos.find(p => p.id === id);
+            if (pedido) {
+                document.getElementById('pedidoId').value = pedido.id;
+                document.getElementById('cliente').value = pedido.cliente_id;
+                document.getElementById('produto').value = pedido.produto_id;
+                document.getElementById('quantidade').value = pedido.quantidade;
+                document.getElementById('valor').value = pedido.valor;
+                document.getElementById('status').value = pedido.status;
+                document.getElementById('observacoes').value = pedido.observacoes || '';
+                abrirModal('editarPedido');
+            }
+        }
+
+        // Função para excluir pedido
+        // Remove o pedido da lista após confirmação do usuário
+        async function excluirPedido(id) {
+            if (confirm('Tem certeza que deseja excluir este pedido?')) {
+                const { error } = await supabaseClient
+                    .from('pedidos')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) {
+                    console.error('Erro ao excluir pedido:', error.message);
+                    alert('Não foi possível excluir o pedido. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Pedido excluído com sucesso!');
+                    // Recarrega a lista de pedidos do banco
+                    carregarPedidos();
+                }
+            }
+        }
+
+        // Função para enviar mensagem via WhatsApp
+        // Simula o envio de informações do pedido para o cliente via WhatsApp
+        function enviarWhatsApp(id) {
+            const pedido = pedidos.find(p => p.id === id);
+            if (pedido) {
+                const statusFormatado = pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1);
+                const mensagem = `Olá ${pedido.cliente_nome}, seu pedido #${pedido.id.toString().padStart(3, '0')} (${pedido.produto_nome}) está ${statusFormatado}. Valor: R$ ${pedido.valor.toFixed(2)}`;
+                // Em um sistema real, isso abriria o WhatsApp com a mensagem
+                alert(`Mensagem preparada para WhatsApp:\n\n${mensagem}\n\n(Em um sistema real, isso abriria o WhatsApp)`);
+            }
+        }
+
+        // Função para atualizar tabela
+        // Re-renderiza a tabela com os dados atuais dos pedidos
+        function atualizarTabela() {
+            const tbody = document.querySelector('#tabelaPedidos tbody');
+            tbody.innerHTML = '';
+
+            pedidos.forEach(pedido => {
+                const dataFormatada = pedido.created_at ? new Date(pedido.created_at).toLocaleDateString('pt-BR') : 'N/A';
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${pedido.id.toString().padStart(3, '0')}</td>
+                    <td>${pedido.cliente_nome || 'Cliente não encontrado'}</td>
+                    <td>${pedido.produto_nome || 'Produto não encontrado'}</td>
+                    <td>${pedido.quantidade}</td>
+                    <td>R$ ${pedido.valor.toFixed(2)}</td>
+                    <td><span class="status ${pedido.status}">${pedido.status.charAt(0).toUpperCase() + pedido.status.slice(1)}</span></td>
+                    <td>${dataFormatada}</td>
+                    <td>
+                        <button onclick="editarPedido(${pedido.id})">Editar</button>
+                        <button class="btn-danger" onclick="excluirPedido(${pedido.id})">Excluir</button>
+                        <button class="btn-secondary" onclick="enviarWhatsApp(${pedido.id})">WhatsApp</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Função para exportar para Excel (simulado)
+        // Em um sistema real, isso geraria um arquivo Excel com os dados
+        function exportarExcel() {
+            alert('Funcionalidade de exportação para Excel seria implementada aqui.\nEm um sistema real, isso geraria um arquivo .xlsx com todos os pedidos.');
+        }
+
+        // Função para exportar para PDF (simulado)
+        // Em um sistema real, isso geraria um arquivo PDF com os dados
+        function exportarPDF() {
+            alert('Funcionalidade de exportação para PDF seria implementada aqui.\nEm um sistema real, isso geraria um arquivo .pdf com todos os pedidos.');
+        }
+
+        // Event listener para submissão do formulário
+        // Salva ou atualiza o pedido quando o formulário é enviado
+        document.getElementById('formPedido').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validação adicional
+            const clienteId = document.getElementById('cliente').value;
+            const produtoId = document.getElementById('produto').value;
+            const quantidade = parseInt(document.getElementById('quantidade').value);
+            const valor = parseFloat(document.getElementById('valor').value);
+
+            // Verificar se cliente foi selecionado
+            if (!clienteId) {
+                alert('Por favor, selecione um cliente.');
+                document.getElementById('cliente').focus();
+                return;
+            }
+
+            // Verificar se produto foi selecionado
+            if (!produtoId) {
+                alert('Por favor, selecione um produto.');
+                document.getElementById('produto').focus();
+                return;
+            }
+
+            // Verificar se quantidade é válida
+            if (!quantidade || quantidade < 1) {
+                alert('A quantidade deve ser maior que zero.');
+                document.getElementById('quantidade').focus();
+                return;
+            }
+
+            // Verificar se valor é válido
+            if (!valor || valor < 0) {
+                alert('O valor deve ser maior ou igual a zero.');
+                document.getElementById('valor').focus();
+                return;
+            }
+
+            const id = document.getElementById('pedidoId').value;
+
+            // Mostrar feedback de carregamento
+            const submitButton = document.querySelector('#formPedido button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Salvando...';
+            submitButton.disabled = true;
+
+            // Coleta os dados do formulário em um objeto
+            // Usando nomes de colunas mais simples para evitar problemas de cache de schema
+            const dadosPedido = {
+                cliente_id: parseInt(clienteId),
+                produto_id: parseInt(produtoId),
+                quantidade: quantidade,
+                valor: valor,
+                status: document.getElementById('status').value,
+                observacoes: document.getElementById('observacoes').value.trim()
+            };
+
+            let error;
+
+            try {
+                if (id) {
+                    // Lógica para ATUALIZAR um pedido existente
+                    const { error: updateError } = await supabaseClient
+                        .from('pedidos')
+                        .update(dadosPedido)
+                        .eq('id', parseInt(id));
+                    error = updateError;
+                } else {
+                    // Lógica para INSERIR um novo pedido
+                    // Tentativa com abordagem mais básica
+                    const { data, error: insertError } = await supabaseClient
+                        .from('pedidos')
+                        .insert(dadosPedido)
+                        .select();
+
+                    if (insertError) {
+                        // Se falhar, tentar uma abordagem alternativa
+                        console.warn('Tentativa padrão falhou, tentando abordagem alternativa:', insertError.message);
+
+                        // Criar um novo objeto sem especificar colunas
+                        const dadosSimples = {
+                            cliente_id: parseInt(clienteId),
+                            produto_id: parseInt(produtoId),
+                            quantidade: quantidade,
+                            valor: valor,
+                            status: document.getElementById('status').value,
+                            observacoes: document.getElementById('observacoes').value.trim()
+                        };
+
+                        const { data: dataAlt, error: errorAlt } = await supabaseClient
+                            .from('pedidos')
+                            .insert([dadosSimples]);
+
+                        error = errorAlt;
+                    } else {
+                        error = null;
+                    }
+                }
+
+                if (error) {
+                    console.error('Erro ao salvar pedido:', error.message);
+                    alert('Não foi possível salvar o pedido. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Pedido salvo com sucesso!');
+                    fecharModal();
+                    // Recarrega a lista de pedidos do banco para exibir a alteração
+                    carregarPedidos();
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                alert('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        });
+
+        // Função para carregar os pedidos do Supabase
+        async function carregarPedidos() {
+            try {
+                // Primeiro, carrega os pedidos
+                const { data: pedidosData, error: pedidosError } = await supabaseClient
+                    .from('pedidos')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (pedidosError) {
+                    console.error('Erro ao carregar pedidos:', pedidosError.message);
+                    alert('Não foi possível carregar os pedidos.');
+                    return;
+                }
+
+                // Carrega todos os clientes e produtos para fazer o mapeamento
+                const [clientesResponse, produtosResponse] = await Promise.all([
+                    supabaseClient.from('clientes').select('id, nome'),
+                    supabaseClient.from('produtos').select('id, nome')
+                ]);
+
+                if (clientesResponse.error || produtosResponse.error) {
+                    console.error('Erro ao carregar dados relacionados:', clientesResponse.error || produtosResponse.error);
+                    alert('Erro ao carregar dados relacionados.');
+                    return;
+                }
+
+                // Cria mapas para busca rápida
+                const clientesMap = {};
+                clientesResponse.data.forEach(cliente => {
+                    clientesMap[cliente.id] = cliente.nome;
+                });
+
+                const produtosMap = {};
+                produtosResponse.data.forEach(produto => {
+                    produtosMap[produto.id] = produto.nome;
+                });
+
+                // Transforma os dados para incluir os nomes
+                pedidos = pedidosData.map(pedido => ({
+                    ...pedido,
+                    cliente_nome: clientesMap[pedido.cliente_id] || 'Cliente não encontrado',
+                    produto_nome: produtosMap[pedido.produto_id] || 'Produto não encontrado'
+                }));
+
+                // Atualiza a tabela com os dados reais
+                atualizarTabela();
+            } catch (error) {
+                console.error('Erro inesperado ao carregar pedidos:', error);
+                alert('Erro inesperado ao carregar os pedidos.');
+            }
+        }
+
+        // Função para carregar clientes no dropdown
+        async function carregarClientesDropdown() {
+            const { data, error } = await supabaseClient
+                .from('clientes')
+                .select('id, nome')
+                .order('nome');
+
+            if (error) {
+                console.error('Erro ao carregar clientes:', error.message);
+            } else {
+                const selectCliente = document.getElementById('cliente');
+                // Mantém a opção padrão
+                selectCliente.innerHTML = '<option value="">Selecione um cliente</option>';
+                data.forEach(cliente => {
+                    const option = document.createElement('option');
+                    option.value = cliente.id;
+                    option.textContent = cliente.nome;
+                    selectCliente.appendChild(option);
+                });
+            }
+        }
+
+        // Função para carregar produtos no dropdown
+        async function carregarProdutosDropdown() {
+            const { data, error } = await supabaseClient
+                .from('produtos')
+                .select('id, nome')
+                .order('nome');
+
+            if (error) {
+                console.error('Erro ao carregar produtos:', error.message);
+            } else {
+                const selectProduto = document.getElementById('produto');
+                // Mantém a opção padrão
+                selectProduto.innerHTML = '<option value="">Selecione um produto</option>';
+                data.forEach(produto => {
+                    const option = document.createElement('option');
+                    option.value = produto.id;
+                    option.textContent = produto.nome;
+                    selectProduto.appendChild(option);
+                });
+            }
+        }
+
+        // Inicializar tabela ao carregar a página
+        window.addEventListener('load', () => {
+            carregarClientesDropdown();
+            carregarProdutosDropdown();
+            carregarPedidos();
+        });
+    </script>
+    <script>
+        // Script de Proteção e Logout
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('userEmail').textContent = session.user.email;
+                // Carrega os dados após confirmar que o usuário está logado
+                carregarClientesDropdown();
+                carregarProdutosDropdown();
+                carregarPedidos();
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                console.error('Erro ao fazer logout:', error.message);
+            } else {
+                alert('Você foi desconectado.');
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+
+</body>
+</html>
