@@ -442,6 +442,7 @@
                     <td>${cliente.cpf || ''}</td>
                     <td>${dataCadastro}</td>
                     <td>
+                        <button class="btn-secondary" onclick="criarOrcamento(${cliente.id})">Criar Orçamento</button>
                         <button onclick="verHistorico(${cliente.id})">Histórico</button>
                         <button onclick="editarCliente(${cliente.id})">Editar</button>
                         <button class="btn-danger" onclick="excluirCliente(${cliente.id})">Excluir</button>
@@ -467,6 +468,14 @@
                 'aniversario': 'Campanha de aniversário enviada para aniversariantes do mês!'
             };
             alert(mensagens[tipo] + '\n\nEm um sistema real, isso enviaria emails personalizados para os clientes selecionados.');
+        }
+
+        // Função para criar um orçamento para um cliente
+        // Redireciona para a página de pedidos, passando o ID do cliente na URL
+        function criarOrcamento(clienteId) {
+            // A página de pedidos.html precisará ser ajustada para ler este parâmetro
+            // e pré-selecionar o cliente ao abrir o modal de novo pedido.
+            window.location.href = `pedidos.html?cliente_id=${clienteId}`;
         }
 
         // Event listener para submissão do formulário
