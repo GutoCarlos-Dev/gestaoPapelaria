@@ -123,12 +123,11 @@
             <table id="tabelaClientes">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Nome</th>
+                        <th>WhatsApp</th>
                         <th>Email</th>
-                        <th>Telefone</th>
-                        <th>Status</th>
-                        <th>Data de Nascimento</th>
+                        <th>CPF</th>
+                        <th>Data de Cadastro</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -434,15 +433,14 @@
             tbody.innerHTML = '';
 
             clientes.forEach(cliente => {
-                const dataNascimento = cliente.data_nascimento ? new Date(cliente.data_nascimento).toLocaleDateString('pt-BR') : 'Não informado';
+                const dataCadastro = cliente.created_at ? new Date(cliente.created_at).toLocaleDateString('pt-BR') : 'N/A';
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${cliente.id.toString().padStart(3, '0')}</td>
                     <td>${cliente.nome}</td>
-                    <td>${cliente.email}</td>
-                    <td>${cliente.whatsapp || cliente.telefone}</td>
-                    <td><span class="status ${cliente.status}">${cliente.status.charAt(0).toUpperCase() + cliente.status.slice(1)}</span></td>
-                    <td>${dataNascimento}</td>
+                    <td>${cliente.whatsapp || ''}</td>
+                    <td>${cliente.email || ''}</td>
+                    <td>${cliente.cpf || ''}</td>
+                    <td>${dataCadastro}</td>
                     <td>
                         <button onclick="verHistorico(${cliente.id})">Histórico</button>
                         <button onclick="editarCliente(${cliente.id})">Editar</button>
