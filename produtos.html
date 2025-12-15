@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -819,3 +820,826 @@
 
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Leka Artes</title>
+    <style>
+        /* Reset e Configurações Globais */
+        :root {
+            --primary-color: #896838; /* Marrom/Dourado Escuro */
+            --secondary-color: #C5AA7F; /* Bege Médio */
+            --accent-color: #F766C4; /* Rosa Vibrante */
+            --light-accent-color: #FBD2D1; /* Rosa Claro */
+            --background-color: #fff; /* Fundo principal branco para clareza */
+            --card-background: #ffffff;
+            --text-color: #896838;
+            --text-light: #C5AA7F;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--background-color); color: var(--text-color); }
+
+        /* Header */
+        header { background-color: var(--card-background); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow); }
+        header h1 { font-size: 1.5em; color: var(--primary-color); margin: 0; display: flex; align-items: center; gap: 10px; }
+        header h1 img {
+            height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+        nav { display: flex; align-items: center; gap: 25px; }
+        nav a { text-decoration: none; color: var(--text-light); font-weight: 600; font-size: 0.9em; transition: color 0.2s; }
+        nav a:hover, nav a.active { color: var(--primary-color); }
+        .container { padding: 20px; }
+        .actions { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { padding: 10px 15px; background-color: #896838; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #6d532d; }
+        .btn-secondary { background-color: #C5AA7F; }
+        .btn-secondary:hover { background-color: #b3986f; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-warning:hover { background-color: #e0a800; }
+        .btn-danger { background-color: #dc3545; }
+        .btn-danger:hover { background-color: #c82333; }
+        .search-bar { margin-bottom: 20px; }
+        input[type="text"] { padding: 8px; width: 300px; border: 1px solid #ddd; border-radius: 4px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .product-card { background-color: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
+        .product-image { width: 100%; height: 200px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 48px; }
+        .product-info { padding: 15px; }
+        .product-name { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
+        .product-price { font-size: 16px; color: #896838; font-weight: bold; margin-bottom: 10px; }
+        .product-stock { font-size: 14px; margin-bottom: 10px; }
+        .stock-low { color: #dc3545; }
+        .stock-normal { color: #28a745; }
+        .product-actions { display: flex; gap: 5px; flex-wrap: wrap; }
+        .product-actions button { padding: 5px 10px; font-size: 12px; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 1000; }
+        .modal-content { background-color: #fff; margin: 5% auto; padding: 20px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; }
+        form { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { padding: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row > * { flex: 1; }
+        .alert { padding: 10px; border-radius: 4px; margin-bottom: 20px; }
+        .alert-warning { background-color: #FBD2D1; color: #896838; border: 1px solid #F766C4; }
+        .alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; } /* Mantido verde para sucesso */
+        .tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .tab {
+            flex: 1;
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            position: relative;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .tab:hover {
+            color: #896838;
+            background: rgba(137, 104, 56, 0.05);
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #896838 0%, #C5AA7F 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(137, 104, 56, 0.3);
+            transform: translateY(-2px);
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #C5AA7F;
+        }
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 30px;
+            margin-top: 10px;
+            border: 1px solid #e9ecef;
+        }
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .stat-card { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align: center; }
+        .stat-value { font-size: 2em; font-weight: bold; color: #896838; }
+        .user-profile { display: flex; align-items: center; gap: 10px; }
+        .user-profile span { font-weight: 600; }
+        .user-profile .avatar { font-size: 24px; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Header - Cabeçalho com navegação para outras seções do sistema -->
+    <header>
+        <h1><img src="imagens/logo letras.jpeg" alt="Leka Artes Logo" title="Leka Artes"> Controle de Produtos</h1>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="pedidos.html">Pedidos</a>
+            <a href="financeiro.html">Financeiro</a>
+            <a href="clientes.html">Clientes</a>
+            <a href="produtos.html" class="active">Produtos</a>
+        </nav>
+        <div class="user-profile">
+            <span class="avatar">👤</span>
+            <span id="userEmail" style="font-weight: 600;"></span>
+            <a href="#" id="logoutButton" title="Sair" style="font-weight: 600; color: #C5AA7F;">Sair</a>
+        </div>
+    </header>
+
+    <!-- Container principal da página de produtos -->
+    <div class="container">
+
+        <!-- Abas para diferentes seções de controle de produtos -->
+        <div class="tabs">
+            <!-- Aba de visualização em grid -->
+            <button class="tab active" onclick="abrirAba('grid')">Visualização em Grid</button>
+            <!-- Aba de controle de estoque -->
+            <button class="tab" onclick="abrirAba('estoque')">Controle de Estoque</button>
+            <!-- Aba de estatísticas -->
+            <button class="tab" onclick="abrirAba('estatisticas')">Estatísticas</button>
+        </div>
+
+        <!-- Conteúdo da aba de visualização em grid -->
+        <div id="grid" class="tab-content active">
+
+            <!-- Barra de pesquisa e ações -->
+            <div class="actions">
+                <!-- Campo de pesquisa por nome do produto -->
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Buscar produto por nome..." onkeyup="filtrarProdutos()">
+                </div>
+                <!-- Botão para adicionar novo produto -->
+                <button onclick="abrirModal('novoProduto')">Novo Produto</button>
+                <!-- Botão para importar produtos -->
+                <button class="btn-secondary" onclick="importarProdutos()">Importar CSV</button>
+                <!-- Botão para exportar produtos -->
+                <button class="btn-secondary" onclick="exportarProdutos()">Exportar CSV</button>
+            </div>
+
+            <!-- Grid de produtos - Exibe produtos em formato de cards -->
+            <div class="product-grid" id="productGrid">
+                <!-- Cards de produtos serão inseridos dinamicamente pelo JavaScript -->
+            </div>
+
+        </div>
+
+        <!-- Conteúdo da aba de controle de estoque -->
+        <div id="estoque" class="tab-content">
+
+            <h2>Controle de Estoque Automático</h2>
+
+            <!-- Alertas de estoque baixo -->
+            <div id="alertasEstoque">
+                <!-- Alertas serão inseridos dinamicamente -->
+            </div>
+
+            <!-- Tabela de controle de estoque -->
+            <table id="estoqueTable" style="width: 100%; border-collapse: collapse; background-color: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left;">Produto</th>
+                        <th style="padding: 12px; text-align: left;">Estoque Atual</th>
+                        <th style="padding: 12px; text-align: left;">Estoque Mínimo</th>
+                        <th style="padding: 12px; text-align: left;">Status</th>
+                        <th style="padding: 12px; text-align: left;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="estoqueTableBody">
+                    <!-- Linhas da tabela serão inseridas dinamicamente -->
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- Conteúdo da aba de estatísticas -->
+        <div id="estatisticas" class="tab-content">
+
+            <h2>Estatísticas de Produtos</h2>
+
+            <!-- Cards de estatísticas -->
+            <div class="stats-grid">
+                <!-- Card: Total de Produtos -->
+                <div class="stat-card">
+                    <h3>Total de Produtos</h3>
+                    <div class="stat-value" id="totalProdutos">0</div>
+                    <p>Cadastrados no sistema</p>
+                </div>
+                <!-- Card: Produtos em Estoque Baixo -->
+                <div class="stat-card">
+                    <h3>Estoque Baixo</h3>
+                    <div class="stat-value" id="estoqueBaixo">0</div>
+                    <p>Precisam reposição</p>
+                </div>
+                <!-- Card: Valor Total do Estoque -->
+                <div class="stat-card">
+                    <h3>Valor do Estoque</h3>
+                    <div class="stat-value" id="valorEstoque">R$ 0,00</div>
+                    <p>Valor total investido</p>
+                </div>
+                <!-- Card: Produtos Mais Vendidos -->
+                <div class="stat-card">
+                    <h3>Mais Vendidos</h3>
+                    <div class="stat-value" id="maisVendidos">Cartões</div>
+                    <p>Produto mais popular</p>
+                </div>
+            </div>
+
+            <!-- Gráfico de distribuição de produtos por categoria (simulado) -->
+            <div style="background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-top: 20px;">
+                <h3>Distribuição por Categoria</h3>
+                <div style="display: flex; justify-content: space-around; align-items: end; height: 200px; margin-top: 20px;">
+                    <div style="text-align: center;">
+                        <div style="width: 40px; height: 120px; background-color: #896838; margin: 0 auto 10px;"></div>
+                        <span>Cartões (40%)</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 40px; height: 80px; background-color: #C5AA7F; margin: 0 auto 10px;"></div>
+                        <span>Banners (25%)</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 40px; height: 60px; background-color: #D5BE8E; margin: 0 auto 10px;"></div>
+                        <span>Folhetos (20%)</span>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 40px; height: 40px; background-color: #FBD2D1; margin: 0 auto 10px;"></div>
+                        <span>Outros (15%)</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Modal para novo/editar produto - Formulário popup para gerenciar produtos -->
+    <div id="modalProduto" class="modal">
+        <div class="modal-content">
+            <!-- Título do modal - muda dinamicamente entre "Novo Produto" e "Editar Produto" -->
+            <h2 id="modalTitle">Novo Produto</h2>
+
+            <!-- Formulário de produto - Campos para inserir dados do produto -->
+            <form id="formProduto">
+                <!-- Campo oculto para ID do produto (usado na edição) -->
+                <input type="hidden" id="produtoId">
+
+                <!-- Linha de campos: Nome e Categoria -->
+                <div class="form-row">
+                    <!-- Campo para nome do produto -->
+                    <div>
+                        <label for="nome">Nome do Produto:</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <!-- Campo para categoria do produto -->
+                    <div>
+                        <label for="categoria">Categoria:</label>
+                        <select id="categoria" required>
+                            <option value="">Selecione uma categoria</option>
+                            <option value="cartacartonada">Caixa Cartonada</option>
+                            <option value="gravatas">Gravatas</option>
+                            <option value="folhetos">Folhetos</option>
+                            <option value="panfletos">Panfletos</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Linha de campos: Preço e Custo -->
+                <div class="form-row">
+                    <!-- Campo para preço de venda -->
+                    <div>
+                        <label for="preco">Preço de Venda (R$):</label>
+                        <input type="number" id="preco" step="0.01" min="0" required>
+                    </div>
+                    <!-- Campo para custo do produto -->
+                    <div>
+                        <label for="custo">Custo (R$):</label>
+                        <input type="number" id="custo" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <!-- Linha de campos: Estoque Atual e Estoque Mínimo -->
+                <div class="form-row">
+                    <!-- Campo para quantidade em estoque -->
+                    <div>
+                        <label for="estoque">Estoque Atual:</label>
+                        <input type="number" id="estoque" min="0" required>
+                    </div>
+                    <!-- Campo para estoque mínimo -->
+                    <div>
+                        <label for="estoqueMinimo">Estoque Mínimo:</label>
+                        <input type="number" id="estoqueMinimo" min="0" required>
+                    </div>
+                </div>
+
+                <!-- Campo para upload de foto do produto -->
+                <label for="fotoProduto">Foto do Produto (opcional):</label>
+                <input type="file" id="fotoProduto" accept="image/*" onchange="previewImagem(this)">
+                <div id="previewContainer" style="margin-top: 10px; display: none;">
+                    <img id="previewImagem" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; border-radius: 4px;" alt="Preview da imagem">
+                </div>
+
+                <!-- Campo para descrição do produto -->
+                <label for="descricao">Descrição:</label>
+                <textarea id="descricao" rows="3" placeholder="Descrição detalhada do produto..."></textarea>
+
+                <!-- Campo para status do produto -->
+                <label for="statusProduto">Status:</label>
+                <select id="statusProduto" required>
+                    <option value="ativo">Ativo</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+
+                <!-- Botões do formulário -->
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <!-- Botão para cancelar e fechar o modal -->
+                    <button type="button" onclick="fecharModal()">Cancelar</button>
+                    <!-- Botão para salvar o produto -->
+                    <button type="submit">Salvar Produto</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variável global para armazenar produtos (simulação de banco de dados)
+        // Esta variável agora será preenchida com dados do Supabase.
+        let produtos = [];
+
+        // Função para abrir abas
+        // Mostra o conteúdo da aba selecionada e oculta as outras
+        function abrirAba(abaId) {
+            // Remover classe active de todas as abas
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Adicionar classe active na aba selecionada
+            event.target.classList.add('active');
+            document.getElementById(abaId).classList.add('active');
+
+            // Atualizar conteúdo específico da aba
+            if (abaId === 'estoque') {
+                atualizarTabelaEstoque();
+            } else if (abaId === 'estatisticas') {
+                atualizarEstatisticas();
+            }
+        }
+
+        // Função para abrir modal de novo produto
+        // Limpa o formulário e define o título apropriado
+        function abrirModal(tipo) {
+            document.getElementById('modalProduto').style.display = 'block';
+            document.getElementById('modalTitle').textContent = tipo === 'novoProduto' ? 'Novo Produto' : 'Editar Produto';
+            if (tipo === 'novoProduto') {
+                limparFormulario();
+            }
+        }
+
+        // Função para fechar modal
+        // Oculta o modal e limpa o formulário
+        function fecharModal() {
+            document.getElementById('modalProduto').style.display = 'none';
+            limparFormulario();
+        }
+
+        // Função para limpar formulário
+        // Reseta todos os campos do formulário para valores vazios
+        function limparFormulario() {
+            document.getElementById('produtoId').value = '';
+            document.getElementById('nome').value = '';
+            document.getElementById('categoria').value = '';
+            document.getElementById('preco').value = '';
+            document.getElementById('custo').value = '';
+            document.getElementById('estoque').value = '';
+            document.getElementById('estoqueMinimo').value = '';
+            document.getElementById('fotoProduto').value = '';
+            document.getElementById('previewContainer').style.display = 'none';
+            document.getElementById('previewImagem').src = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('statusProduto').value = 'ativo';
+        }
+
+        // Função para preview da imagem
+        // Mostra uma prévia da imagem selecionada antes do upload
+        function previewImagem(event) {
+            const file = event.target.files[0];
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImagem = document.getElementById('previewImagem');
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImagem.src = e.target.result;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewContainer.style.display = 'none';
+                previewImagem.src = '';
+            }
+        }
+
+        // Função para editar produto
+        // Carrega os dados do produto no formulário para edição
+        function editarProduto(id) {
+            const produto = produtos.find(p => p.id === id);
+            if (produto) {
+                document.getElementById('produtoId').value = produto.id;
+                document.getElementById('nome').value = produto.nome;
+                document.getElementById('categoria').value = produto.categoria;
+                document.getElementById('preco').value = produto.preco;
+                document.getElementById('custo').value = produto.custo;
+                document.getElementById('estoque').value = produto.estoque;
+                document.getElementById('estoqueMinimo').value = produto.estoque_minimo; // Corrigido para bater com o banco
+                document.getElementById('descricao').value = produto.descricao;
+                document.getElementById('statusProduto').value = produto.status;
+                abrirModal('editarProduto');
+            }
+        }
+
+        // Função para excluir produto
+        // Remove o produto da lista após confirmação do usuário
+        function excluirProduto(id) {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                produtos = produtos.filter(p => p.id !== id);
+                atualizarGrid();
+                atualizarTabelaEstoque();
+                atualizarEstatisticas();
+            }
+        }
+
+        // Função para ajustar estoque
+        // Permite aumentar ou diminuir o estoque manualmente
+        function ajustarEstoque(id, acao) {
+            const produto = produtos.find(p => p.id === id);
+            if (produto) {
+                const quantidade = parseInt(prompt(`Quantidade para ${acao === 'adicionar' ? 'adicionar' : 'remover'}:`));
+                if (quantidade && quantidade > 0) {
+                    if (acao === 'adicionar') {
+                        produto.estoque += quantidade;
+                    } else if (acao === 'remover' && produto.estoque >= quantidade) {
+                        produto.estoque -= quantidade;
+                    } else {
+                        alert('Quantidade insuficiente em estoque!');
+                        return;
+                    }
+                    atualizarGrid();
+                    atualizarTabelaEstoque();
+                    atualizarEstatisticas();
+                }
+            }
+        }
+
+        // Função para filtrar produtos
+        // Filtra o grid baseado no texto digitado na busca
+        function filtrarProdutos() {
+            const filtro = document.getElementById('searchInput').value.toLowerCase();
+            const cards = document.querySelectorAll('.product-card');
+
+            cards.forEach(card => {
+                const nome = card.querySelector('.product-name').textContent.toLowerCase();
+                card.style.display = nome.includes(filtro) ? '' : 'none';
+            });
+        }
+
+        // Função para atualizar grid de produtos
+        // Re-renderiza o grid com os dados atuais dos produtos
+        function atualizarGrid() {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+
+                const estoqueStatus = produto.estoque <= produto.estoqueMinimo ? 'stock-low' : 'stock-normal';
+                const estoqueTexto = produto.estoque <= produto.estoqueMinimo ? 'Estoque Baixo' : 'Estoque Normal';
+
+                // Verificar se o produto tem uma imagem
+                const imagemProduto = produto.imagem_url ?
+                    `<img src="${produto.imagem_url}" alt="${produto.nome}" style="width: 100%; height: 100%; object-fit: cover;">` :
+                    produto.nome.charAt(0).toUpperCase();
+
+                card.innerHTML = `
+                    <div class="product-image">${imagemProduto}</div>
+                    <div class="product-info">
+                        <div class="product-name">${produto.nome}</div>
+                        <div class="product-price">R$ ${produto.preco.toFixed(2)}</div>
+                        <div class="product-stock ${estoqueStatus}">Estoque: ${produto.estoque} (${estoqueTexto})</div>
+                        <div class="product-actions">
+                            <button onclick="editarProduto(${produto.id})">Editar</button>
+                            <button class="btn-secondary" onclick="ajustarEstoque(${produto.id}, 'adicionar')">+ Estoque</button>
+                            <button class="btn-warning" onclick="ajustarEstoque(${produto.id}, 'remover')">- Estoque</button>
+                            <button class="btn-danger" onclick="excluirProduto(${produto.id})">Excluir</button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Função para atualizar tabela de estoque
+        // Mostra produtos com controle de estoque e alertas
+        function atualizarTabelaEstoque() {
+            const tbody = document.getElementById('estoqueTableBody');
+            const alertas = document.getElementById('alertasEstoque');
+
+            tbody.innerHTML = '';
+            alertas.innerHTML = '';
+
+            produtos.forEach(produto => {
+                const estoqueMinimo = produto.estoque_minimo || 0; // Usar o campo correto do banco
+                const status = produto.estoque <= estoqueMinimo ? 'Crítico' : 'Normal';
+                const statusClass = produto.estoque <= estoqueMinimo ? 'stock-low' : 'stock-normal';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${produto.nome}</td>
+                    <td>${produto.estoque}</td>
+                    <td>${estoqueMinimo}</td>
+                    <td><span class="${statusClass}">${status}</span></td>
+                    <td>
+                        <button onclick="ajustarEstoque(${produto.id}, 'adicionar')">Repor</button>
+                        <button class="btn-warning" onclick="editarProduto(${produto.id})">Ajustar</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+
+                // Adicionar alerta se estoque baixo
+                if (produto.estoque <= estoqueMinimo) {
+                    const alerta = document.createElement('div');
+                    alerta.className = 'alert alert-warning';
+                    alerta.innerHTML = `<strong>Alerta:</strong> ${produto.nome} está com estoque baixo (${produto.estoque} unidades). Considere repor!`;
+                    alertas.appendChild(alerta);
+                }
+            });
+        }
+
+        // Função para atualizar estatísticas
+        // Calcula e exibe estatísticas dos produtos
+        function atualizarEstatisticas() {
+            const totalProdutos = produtos.length;            
+            document.getElementById('totalProdutos').textContent = totalProdutos;
+
+            if (totalProdutos === 0) {
+                // Se não houver produtos, define valores padrão para as estatísticas
+                document.getElementById('estoqueBaixo').textContent = 0;
+                document.getElementById('valorEstoque').textContent = 'R$ 0,00';
+                document.getElementById('maisVendidos').textContent = 'N/A';
+                return; // Sai da função para evitar erros
+            }
+
+            // Se houver produtos, continua com os cálculos
+            const estoqueBaixo = produtos.filter(p => p.estoque <= p.estoque_minimo).length;
+            const valorEstoque = produtos.reduce((total, p) => total + (p.custo * p.estoque), 0);
+            const maisVendido = produtos.reduce((prev, current) => (prev.estoque > current.estoque) ? prev : current);
+
+            document.getElementById('estoqueBaixo').textContent = estoqueBaixo;
+            document.getElementById('valorEstoque').textContent = `R$ ${valorEstoque.toFixed(2)}`;
+            document.getElementById('maisVendidos').textContent = maisVendido.nome.split(' ')[0];
+        }
+
+        // Função para importar produtos (simulado)
+        // Em um sistema real, isso permitiria upload de arquivo CSV
+        function importarProdutos() {
+            alert('Funcionalidade de importação seria implementada aqui.\nEm um sistema real, isso permitiria fazer upload de um arquivo CSV com produtos.');
+        }
+
+        // Função para exportar produtos (simulado)
+        // Em um sistema real, isso geraria um arquivo CSV para download
+        function exportarProdutos() {
+            alert('Funcionalidade de exportação seria implementada aqui.\nEm um sistema real, isso geraria um arquivo CSV para download com todos os produtos.');
+        }
+
+        // Função para fazer upload da imagem para o Supabase Storage
+        async function uploadImagem(file) {
+            if (!file) return null;
+
+            try {
+                // Criar nome único para o arquivo
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+                const filePath = `produtos/${fileName}`;
+
+                // Upload para o Supabase Storage
+                const { data, error } = await supabaseClient.storage
+                    .from('imagens-produtos') // Nome do bucket que você criou
+                    .upload(filePath, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (error) {
+                    console.error('Erro no upload da imagem:', error);
+                    throw error;
+                }
+
+                // Obter URL pública da imagem
+                const { data: { publicUrl } } = supabaseClient.storage
+                    .from('imagens-produtos')
+                    .getPublicUrl(filePath);
+
+                return publicUrl;
+            } catch (error) {
+                console.error('Erro ao fazer upload da imagem:', error);
+                alert('Erro ao fazer upload da imagem. Tente novamente.');
+                return null;
+            }
+        }
+
+        // Event listener para submissão do formulário
+        // Salva ou atualiza o produto quando o formulário é enviado
+        document.getElementById('formProduto').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validação adicional
+            const preco = parseFloat(document.getElementById('preco').value);
+            const custo = parseFloat(document.getElementById('custo').value);
+            const estoque = parseInt(document.getElementById('estoque').value);
+            const estoqueMinimo = parseInt(document.getElementById('estoqueMinimo').value);
+
+            // Verificar se preço é maior que custo
+            if (preco <= custo) {
+                alert('O preço de venda deve ser maior que o custo do produto.');
+                document.getElementById('preco').focus();
+                return;
+            }
+
+            // Verificar se estoque mínimo não é maior que estoque atual
+            if (estoqueMinimo > estoque) {
+                alert('O estoque mínimo não pode ser maior que o estoque atual.');
+                document.getElementById('estoqueMinimo').focus();
+                return;
+            }
+
+            // Verificar se nome não está vazio
+            const nome = document.getElementById('nome').value.trim();
+            if (!nome) {
+                alert('O nome do produto é obrigatório.');
+                document.getElementById('nome').focus();
+                return;
+            }
+
+            const id = document.getElementById('produtoId').value;
+            const fileInput = document.getElementById('fotoProduto');
+            const file = fileInput.files[0];
+
+            // Mostrar feedback de carregamento
+            const submitButton = document.querySelector('#formProduto button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Salvando...';
+            submitButton.disabled = true;
+
+            try {
+                let imagemUrl = null;
+
+                // Se há um arquivo selecionado, fazer upload
+                if (file) {
+                    submitButton.textContent = 'Enviando imagem...';
+                    imagemUrl = await uploadImagem(file);
+                    if (!imagemUrl) {
+                        // Se o upload falhou, não prosseguir
+                        submitButton.textContent = originalText;
+                        submitButton.disabled = false;
+                        return;
+                    }
+                }
+
+                submitButton.textContent = 'Salvando produto...';
+
+                // Coleta os dados do formulário em um objeto
+                const dadosProduto = {
+                    nome: nome,
+                    categoria: document.getElementById('categoria').value,
+                    preco: preco,
+                    custo: custo,
+                    estoque: estoque,
+                    estoque_minimo: estoqueMinimo,
+                    descricao: document.getElementById('descricao').value.trim(),
+                    status: document.getElementById('statusProduto').value,
+                    imagem_url: imagemUrl // Adicionar URL da imagem
+                };
+
+                let error;
+
+                if (id) {
+                    // Lógica para ATUALIZAR um produto existente
+                    const { error: updateError } = await supabaseClient
+                        .from('produtos')
+                        .update(dadosProduto)
+                        .eq('id', parseInt(id));
+                    error = updateError;
+                } else {
+                    // Lógica para INSERIR um novo produto
+                    const { error: insertError } = await supabaseClient
+                        .from('produtos')
+                        .insert([dadosProduto]);
+                    error = insertError;
+                }
+
+                if (error) {
+                    console.error('Erro ao salvar produto:', error.message);
+                    alert('Não foi possível salvar o produto. Verifique o console para mais detalhes.');
+                } else {
+                    alert('Produto salvo com sucesso!');
+                    fecharModal();
+                    // Recarrega a lista de produtos do banco para exibir a alteração
+                    carregarProdutos();
+                }
+            } catch (err) {
+                console.error('Erro inesperado:', err);
+                alert('Ocorreu um erro inesperado. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            }
+        });
+    </script>
+    <script>
+        // Script de Proteção e Logout
+        const SUPABASE_URL = 'https://akzaqssyvmdbubdlymnl.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFremFxc3N5dm1kYnViZGx5bW5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA2NTEsImV4cCI6MjA3OTc0NjY1MX0.k3kut3jsHVtp8XRjUnnyj09-LmBZ-AvZd1H4qVc0WhY';
+
+        const { createClient } = supabase;
+        const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+
+            if (!session) {
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('userEmail').textContent = session.user.email;
+                // Após confirmar que o usuário está logado, carregamos os produtos.
+                carregarProdutos();
+            }
+        });
+
+        document.getElementById('logoutButton').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const { error } = await supabaseClient.auth.signOut();
+
+            if (error) {
+                console.error('Erro ao fazer logout:', error.message);
+            } else {
+                alert('Você foi desconectado.');
+                window.location.href = 'index.html';
+            }
+        });
+
+        // Função para carregar os produtos do Supabase
+        async function carregarProdutos() {
+            const { data, error } = await supabaseClient
+                .from('produtos')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Erro ao carregar produtos:', error.message);
+                alert('Não foi possível carregar os produtos.');
+            } else {
+                produtos = data;
+                // Agora que temos os dados reais, atualizamos todas as partes da página.
+                atualizarGrid();
+                atualizarTabelaEstoque();
+                atualizarEstatisticas();
+            }
+        }
+    </script>
+
+</body>
+</html>
+>>>>>>> 476a829341d6fd4dd8491ebb1a4cd534eeb13e93
